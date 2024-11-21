@@ -8,3 +8,4 @@ edition = "2021"
 license = "Apache-2.0"
 
 [dependencies]
+rtsan-standalone-sys = { path = "rtsan-standalone-sys" }

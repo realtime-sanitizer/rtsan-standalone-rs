@@ -5,6 +5,9 @@ version = 3
 [[package]]
 name = "rtsan-standalone-rs"
 version = "0.1.0"
+dependencies = [
+ "rtsan-standalone-sys",
+]
 
 [[package]]
 name = "rtsan-standalone-sys"

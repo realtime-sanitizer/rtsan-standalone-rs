@@ -1,14 +1,19 @@
-pub fn add(left: u64, right: u64) -> u64 {
-    left + right
-}
+pub use rtsan_standalone_sys::*;
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-
     #[test]
     fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
+        use super::*;
+
+        unsafe { __rtsan_ensure_initialized() };
+
+        let mut my_vec = Vec::with_capacity(1);
+
+        unsafe { __rtsan_realtime_enter() };
+
+        my_vec.push(1.0);
+
+        unsafe { __rtsan_realtime_exit() };
     }
 }
