@@ -20,10 +20,12 @@ pub fn __rtsan_ensure_initialized() {
     unsafe { rtsan_standalone_sys::__rtsan_ensure_initialized() };
 }
 
-pub fn __rtsan_notify_blocking_call(blocking_function_name: &str) {
-    let c_string = std::ffi::CString::new(blocking_function_name)
-        .expect("String contained a null byte, which is not allowed in C strings.");
-    unsafe { rtsan_standalone_sys::__rtsan_notify_blocking_call(c_string.as_ptr()) };
+pub fn __rtsan_notify_blocking_call(function_name: &'static str) {
+    unsafe {
+        rtsan_standalone_sys::__rtsan_notify_blocking_call(
+            function_name.as_ptr() as *const std::ffi::c_char
+        )
+    };
 }
 
 #[macro_export]

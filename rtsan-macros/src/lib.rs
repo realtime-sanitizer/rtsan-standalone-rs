@@ -45,10 +45,7 @@ pub fn blocking(_attr: TokenStream, item: TokenStream) -> TokenStream {
     // Generate the transformed function
     let output = quote! {
         #sig {
-            let c_string = std::ffi::CString::new(#function_name)
-                .expect("String contained a null byte, which is not allowed in C strings.");
-            unsafe { rtsan_standalone_sys::__rtsan_notify_blocking_call(c_string.as_ptr()) };
-
+            unsafe { rtsan_standalone_sys::__rtsan_notify_blocking_call(#function_name.as_ptr() as *const std::ffi::c_char) };
             // Directly execute and return the block
             #block
         }
