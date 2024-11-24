@@ -1,12 +1,8 @@
 [workspace]
-members = ["rtsan-sys"]
+members = ["crates/rtsan", "crates/rtsan-sys", "example"]
+resolver = "2"
 
-[package]
-name = "rtsan"
-version = "0.1.0"
-edition = "2021"
-license = "Apache-2.0"
-
-[dependencies]
-rtsan-macros = { path = "rtsan-macros" }
-rtsan-sys = { path = "rtsan-sys" }
+[workspace.dependencies]
+rtsan = { path = "crates/rtsan" }
+rtsan-macros = { path = "crates/rtsan-macros" }
+rtsan-sys = { path = "crates/rtsan-sys" }

@@ -1,7 +1,5 @@
 use std::sync::{LockResult, MutexGuard, TryLockResult};
 
-use rtsan_macros::blocking;
-
 /// A mutual exclusion primitive useful for protecting shared data
 ///
 /// This mutex will block threads waiting for the lock to become available. The
@@ -223,8 +221,8 @@ impl<T> Mutex<T> {
     /// }).join().expect("thread::spawn failed");
     /// assert_eq!(*mutex.lock().unwrap(), 10);
     /// ```
-    #[blocking]
     pub fn lock(&self) -> LockResult<MutexGuard<T>> {
+        crate::notify_blocking_call("lock\0");
         self.inner.lock()
     }
 

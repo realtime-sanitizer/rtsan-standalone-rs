@@ -1,0 +1,8 @@
+[package]
+name = "rtsan"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+rtsan-macros = { workspace = true }
+rtsan-sys = { workspace = true }

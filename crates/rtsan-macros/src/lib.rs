@@ -21,12 +21,12 @@ pub fn non_blocking(_attr: TokenStream, item: TokenStream) -> TokenStream {
     let output = quote! {
         #(#attrs)*
         #vis #sig {
-            unsafe { rtsan_sys::__rtsan_realtime_enter() };
+            rtsan::realtime_enter();
 
             // Wrap the block to potentially handle the return value
             let result = #block;
 
-            unsafe { rtsan_sys::__rtsan_realtime_exit() };
+            rtsan::realtime_exit();
 
             result
         }
@@ -51,7 +51,7 @@ pub fn blocking(_attr: TokenStream, item: TokenStream) -> TokenStream {
     let output = quote! {
         #(#attrs)*
         #vis #sig {
-            unsafe { rtsan_sys::__rtsan_notify_blocking_call(#function_name.as_ptr() as *const std::ffi::c_char) };
+            rtsan::notify_blocking_call(#function_name);
             // Directly execute and return the block
             #block
         }
@@ -75,12 +75,12 @@ pub fn no_sanitize(_attr: TokenStream, item: TokenStream) -> TokenStream {
     let output = quote! {
         #(#attrs)*
         #vis #sig {
-            unsafe { rtsan_sys::__rtsan_disable() };
+            rtsan::disable();
 
             // Wrap the block to potentially handle the return value
             let result = #block;
 
-            unsafe { rtsan_sys::__rtsan_enable() };
+            rtsan::enable();
 
             result
         }

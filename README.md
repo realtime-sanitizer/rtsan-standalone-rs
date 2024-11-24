@@ -1,17 +1,28 @@
 # rtsan-standalone-rs
 Rust crate repo for rtsan standalone
 
-## Examples
+## Example
 
-To run an example call this from the root of the project:
+The example project shows how you would integrate rtsan into your application.
+
+Run the example:
 
 ```sh
-cargo run --example vector
+cargo run -p example
 ```
 
-The expected output should be:
+It will run fine and print `Example finished successfully!`.
 
+If you activate the rtsan feature, rtsan will check the `process` function for real-time violations.
+
+```sh
+cargo run -p example -F rtsan
 ```
-==104123==ERROR: RealtimeSanitizer: unsafe-library-call
-Intercepted call to real-time unsafe function `calloc` in real-time context!
+
+Now the application will crash with the following output
+
+```sh
+==70107==ERROR: RealtimeSanitizer: blocking-call
+Call to blocking function `lock` in real-time context!
 ```
+For more examples of every feature check `crates/rtsan/examples`.
