@@ -26,6 +26,16 @@ pub fn __rtsan_notify_blocking_call(blocking_function_name: &str) {
     unsafe { rtsan_standalone_sys::__rtsan_notify_blocking_call(c_string.as_ptr()) };
 }
 
+#[macro_export]
+macro_rules! disabled_scope {
+    ($block:block) => {{
+        unsafe { rtsan_standalone_sys::__rtsan_disable() };
+        let result = (|| $block)();
+        unsafe { rtsan_standalone_sys::__rtsan_enable() };
+        result
+    }};
+}
+
 #[cfg(test)]
 mod tests {
     #[test]
