@@ -1,5 +1,5 @@
 [package]
-name = "rtsan-standalone-sys"
+name = "rtsan-sys"
 description = "Unsafe Rust bindings for rtsan standalone library"
 version = "0.1.0"
 edition = "2021"

@@ -21,6 +21,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "rtsan"
+version = "0.1.0"
+dependencies = [
+ "rtsan-macros",
+ "rtsan-sys",
+]
+
+[[package]]
 name = "rtsan-macros"
 version = "0.1.0"
 dependencies = [
@@ -29,15 +37,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "rtsan-standalone-rs"
-version = "0.1.0"
-dependencies = [
- "rtsan-macros",
- "rtsan-standalone-sys",
-]
-
-[[package]]
-name = "rtsan-standalone-sys"
+name = "rtsan-sys"
 version = "0.1.0"
 
 [[package]]

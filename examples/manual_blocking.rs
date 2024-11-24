@@ -1,15 +1,13 @@
-use rtsan_standalone_rs::{__rtsan_ensure_initialized, blocking, non_blocking};
-
-#[blocking]
+#[rtsan::blocking]
 fn blocking_function() {}
 
-#[non_blocking]
+#[rtsan::non_blocking]
 fn realtime_function() {
     blocking_function();
 }
 
 fn main() {
-    __rtsan_ensure_initialized();
+    rtsan::ensure_initialized();
 
     realtime_function();
 }

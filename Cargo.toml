@@ -1,12 +1,12 @@
 [workspace]
-members = ["rtsan-standalone-sys"]
+members = ["rtsan-sys"]
 
 [package]
-name = "rtsan-standalone-rs"
+name = "rtsan"
 version = "0.1.0"
 edition = "2021"
 license = "Apache-2.0"
 
 [dependencies]
 rtsan-macros = { path = "rtsan-macros" }
-rtsan-standalone-sys = { path = "rtsan-standalone-sys" }
+rtsan-sys = { path = "rtsan-sys" }

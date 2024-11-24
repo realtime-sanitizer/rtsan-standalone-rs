@@ -12,18 +12,19 @@ pub fn non_blocking(_attr: TokenStream, item: TokenStream) -> TokenStream {
     let input = parse_macro_input!(item as ItemFn);
 
     // Extract the function signature and body
+    let vis = input.vis;
     let sig = input.sig;
     let block = input.block;
 
     // Generate the transformed function
     let output = quote! {
-        #sig {
-            unsafe { rtsan_standalone_sys::__rtsan_realtime_enter() };
+        #vis #sig {
+            unsafe { rtsan_sys::__rtsan_realtime_enter() };
 
             // Wrap the block to potentially handle the return value
             let result = #block;
 
-            unsafe { rtsan_standalone_sys::__rtsan_realtime_exit() };
+            unsafe { rtsan_sys::__rtsan_realtime_exit() };
 
             result
         }
@@ -47,7 +48,7 @@ pub fn blocking(_attr: TokenStream, item: TokenStream) -> TokenStream {
     // Generate the transformed function with the original visibility
     let output = quote! {
         #vis #sig {
-            unsafe { rtsan_standalone_sys::__rtsan_notify_blocking_call(#function_name.as_ptr() as *const std::ffi::c_char) };
+            unsafe { rtsan_sys::__rtsan_notify_blocking_call(#function_name.as_ptr() as *const std::ffi::c_char) };
             // Directly execute and return the block
             #block
         }
@@ -62,18 +63,19 @@ pub fn no_sanitize(_attr: TokenStream, item: TokenStream) -> TokenStream {
     let input = parse_macro_input!(item as ItemFn);
 
     // Extract the function signature and body
+    let vis = input.vis;
     let sig = input.sig;
     let block = input.block;
 
     // Generate the transformed function
     let output = quote! {
-        #sig {
-            unsafe { rtsan_standalone_sys::__rtsan_disable() };
+        #vis #sig {
+            unsafe { rtsan_sys::__rtsan_disable() };
 
             // Wrap the block to potentially handle the return value
             let result = #block;
 
-            unsafe { rtsan_standalone_sys::__rtsan_enable() };
+            unsafe { rtsan_sys::__rtsan_enable() };
 
             result
         }

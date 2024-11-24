@@ -1,12 +1,12 @@
 use std::sync::Arc;
 
-use rtsan_standalone_rs::sync::Mutex;
+use rtsan::sync::Mutex;
 
 pub struct State {
     value: usize,
 }
 
-#[rtsan_standalone_rs::non_blocking]
+#[rtsan::non_blocking]
 fn process(state: Arc<Mutex<State>>) {
     let mut guard = state.lock().unwrap();
     guard.value += 1;
