@@ -1,5 +1,7 @@
 pub use rtsan_macros::*;
 
+pub mod sync;
+
 pub fn __rtsan_realtime_enter() {
     unsafe { rtsan_standalone_sys::__rtsan_realtime_enter() };
 }

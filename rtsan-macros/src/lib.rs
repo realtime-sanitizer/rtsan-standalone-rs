@@ -37,14 +37,16 @@ pub fn blocking(_attr: TokenStream, item: TokenStream) -> TokenStream {
     // Parse the input token stream as a function
     let input = parse_macro_input!(item as ItemFn);
 
-    // Extract the function signature and body
+    // Extract the function's visibility, signature, and body
+    let vis = input.vis;
     let sig = input.sig;
     let block = input.block;
-    let function_name = sig.ident.to_string();
+    let mut function_name = sig.ident.to_string();
+    function_name.push('\0');
 
-    // Generate the transformed function
+    // Generate the transformed function with the original visibility
     let output = quote! {
-        #sig {
+        #vis #sig {
             unsafe { rtsan_standalone_sys::__rtsan_notify_blocking_call(#function_name.as_ptr() as *const std::ffi::c_char) };
             // Directly execute and return the block
             #block
