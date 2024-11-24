@@ -1,13 +1,12 @@
-use rtsan_standalone_rs::*;
+use rtsan_standalone_rs::{__rtsan_ensure_initialized, non_blocking};
+
+#[non_blocking]
+fn my_function() {
+    let _ = vec![0.0; 256];
+}
 
 fn main() {
-    unsafe { __rtsan_ensure_initialized() };
+    __rtsan_ensure_initialized();
 
-    let mut my_vec = Vec::new();
-
-    unsafe { __rtsan_realtime_enter() };
-
-    my_vec.push(1.0);
-
-    unsafe { __rtsan_realtime_exit() };
+    my_function();
 }

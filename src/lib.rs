@@ -1,4 +1,16 @@
-pub use rtsan_standalone_sys::*;
+pub use rtsan_macros::*;
+
+pub fn __rtsan_ensure_initialized() {
+    unsafe { rtsan_standalone_sys::__rtsan_ensure_initialized() };
+}
+
+pub fn __rtsan_realtime_enter() {
+    unsafe { rtsan_standalone_sys::__rtsan_realtime_enter() };
+}
+
+pub fn __rtsan_realtime_exit() {
+    unsafe { rtsan_standalone_sys::__rtsan_realtime_exit() };
+}
 
 #[cfg(test)]
 mod tests {
@@ -6,14 +18,14 @@ mod tests {
     fn it_works() {
         use super::*;
 
-        unsafe { __rtsan_ensure_initialized() };
+        __rtsan_ensure_initialized();
 
         let mut my_vec = Vec::with_capacity(1);
 
-        unsafe { __rtsan_realtime_enter() };
+        __rtsan_realtime_enter();
 
         my_vec.push(1.0);
 
-        unsafe { __rtsan_realtime_exit() };
+        __rtsan_realtime_exit();
     }
 }
