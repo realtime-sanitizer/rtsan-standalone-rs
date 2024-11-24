@@ -31,3 +31,28 @@ pub fn non_blocking(_attr: TokenStream, item: TokenStream) -> TokenStream {
 
     TokenStream::from(output)
 }
+
+#[proc_macro_attribute]
+pub fn blocking(_attr: TokenStream, item: TokenStream) -> TokenStream {
+    // Parse the input token stream as a function
+    let input = parse_macro_input!(item as ItemFn);
+
+    // Extract the function signature and body
+    let sig = input.sig;
+    let block = input.block;
+    let function_name = sig.ident.to_string();
+
+    // Generate the transformed function
+    let output = quote! {
+        #sig {
+            let c_string = std::ffi::CString::new(#function_name)
+                .expect("String contained a null byte, which is not allowed in C strings.");
+            unsafe { rtsan_standalone_sys::__rtsan_notify_blocking_call(c_string.as_ptr()) };
+
+            // Directly execute and return the block
+            #block
+        }
+    };
+
+    TokenStream::from(output)
+}
