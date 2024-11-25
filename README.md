@@ -1,28 +1,44 @@
 # rtsan-standalone-rs
-Rust crate repo for rtsan standalone
 
-## Example
+Rust crate repository for the RTSan standalone library.
 
-The example project shows how you would integrate rtsan into your application.
+## Overview
 
-Run the example:
+This crate demonstrates how to integrate RTSan into your Rust application for detecting real-time violations.  
 
-```sh
+## Example Usage
+
+The included example project illustrates the integration of RTSan.
+
+### Running the Example
+
+Run the example without the RTSan feature:
+
+```bash
 cargo run -p example
 ```
 
-It will run fine and print `Example finished successfully!`.
+This will execute successfully and print:
 
-If you activate the rtsan feature, rtsan will check the `process` function for real-time violations.
+```
+Example finished successfully!
+```
 
-```sh
+### Enabling the RTSan Feature
+
+To enable RTSan for detecting real-time violations in the `process` function, activate the `rtsan` feature:
+
+```bash
 cargo run -p example -F rtsan
 ```
 
-Now the application will crash with the following output
+With the `rtsan` feature enabled, the application will crash if a real-time violation is detected. For example, it may produce the following error:
 
-```sh
+```
 ==70107==ERROR: RealtimeSanitizer: blocking-call
 Call to blocking function `lock` in real-time context!
 ```
-For more examples of every feature check `crates/rtsan/examples`.
+
+### Additional Examples
+
+For more examples showcasing various features of RTSan, refer to the [examples directory](crates/rtsan/examples).
