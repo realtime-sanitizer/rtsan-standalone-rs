@@ -9,13 +9,15 @@ pub struct MyProcessor {
     big_data: Arc<Mutex<[f32; 256]>>,
 }
 
-impl MyProcessor {
-    pub fn new() -> Self {
+impl Default for MyProcessor {
+    fn default() -> Self {
         Self {
             big_data: Arc::new(Mutex::new([2.0; 256])),
         }
     }
+}
 
+impl MyProcessor {
     /// Add the `rtsan::non_blocking` macro to the process function,
     /// in case the rtsan feature is activated
     #[cfg_attr(feature = "rtsan", rtsan::non_blocking)]
@@ -32,7 +34,7 @@ fn main() {
     #[cfg(feature = "rtsan")]
     rtsan::ensure_initialized();
 
-    let mut processor = MyProcessor::new();
+    let mut processor = MyProcessor::default();
 
     let mut audio = vec![1.0; 256];
     processor.process(&mut audio);

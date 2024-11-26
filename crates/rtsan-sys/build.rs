@@ -46,6 +46,6 @@ fn create_symlink_macos() {
     }
 
     // Create the symlink
-    std::os::unix::fs::symlink(&lib_source, &lib_symlink)
+    std::os::unix::fs::symlink(lib_source, &lib_symlink)
         .expect("Failed to create symlink in ~/lib");
 }
