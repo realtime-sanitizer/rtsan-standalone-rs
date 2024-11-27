@@ -1,4 +1,4 @@
-use std::sync::{LockResult, MutexGuard, TryLockResult};
+pub use std::sync::*;
 
 /// A mutual exclusion primitive useful for protecting shared data
 ///

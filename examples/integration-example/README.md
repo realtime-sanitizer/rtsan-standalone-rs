@@ -20,14 +20,17 @@ rtsan = ["dep:rtsan"]
 Conditionally use RTSan in your application:
 
 ```rust
-#[cfg(feature = "rtsan")]
-use rtsan::sync::Mutex;
 #[cfg(not(feature = "rtsan"))]
-use std::sync::Mutex;
+use std::sync;
+#[cfg(feature = "rtsan")]
+use rtsan::sync;
 
 #[cfg_attr(feature = "rtsan", rtsan::non_blocking)]
 pub fn process(&mut self, audio: &mut [f32]) { }
 ```
+
+To detect locks in a Mutex currently the `rtsan::sync::Mutex` has to be used.
+The module `rtsan::sync` re-exports the whole `std::sync` module for simplicity.
 
 ## Running the Example
 

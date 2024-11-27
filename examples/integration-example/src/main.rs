@@ -1,18 +1,22 @@
+#[cfg(not(feature = "rtsan"))]
+use std::sync;
+
 // For tracking mutex locks, currently the rtsan::sync::Mutex has to be used
 #[cfg(feature = "rtsan")]
-use rtsan::sync::Mutex;
-use std::sync::Arc;
-#[cfg(not(feature = "rtsan"))]
-use std::sync::Mutex;
+use rtsan::sync;
+
+use sync::{Arc, Mutex, RwLock};
 
 pub struct MyProcessor {
     big_data: Arc<Mutex<[f32; 256]>>,
+    other_data: Arc<RwLock<[f32; 2]>>,
 }
 
 impl Default for MyProcessor {
     fn default() -> Self {
         Self {
             big_data: Arc::new(Mutex::new([2.0; 256])),
+            other_data: Arc::new(RwLock::new([2.0; 2])),
         }
     }
 }
