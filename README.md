@@ -21,10 +21,13 @@ Alternatively, add it to your `Cargo.toml`:
 rtsan = { git = "https://github.com/realtime-sanitizer/rtsan-standalone-rs", branch = "dev" }
 ```
 
+The initial build of `rtsan-sys` may take a few minutes to compile the LLVM
+libraries.
+
 We recommend using RTSan as an optional dependency behind a feature flag or as a
 dev dependency to avoid shipping it in production builds. For an integration
 example, refer to the
-[integration example readme](examples/integration-example/README.md).
+[integration-example README](examples/integration-example/README.md).
 
 ## Examples
 
