@@ -16,7 +16,7 @@ The included example project illustrates the integration of RTSan.
 Run the example without the RTSan feature:
 
 ```bash
-cargo run -p example
+cargo run --package example
 ```
 
 This will execute successfully and print:
@@ -31,7 +31,7 @@ To enable RTSan for detecting real-time violations in the `process` function,
 activate the `rtsan` feature:
 
 ```bash
-cargo run -p example -F rtsan
+cargo run --package example --features rtsan
 ```
 
 With the `rtsan` feature enabled, the application will crash if a real-time

@@ -1,51 +1,142 @@
+use std::env;
+use std::fs;
+use std::path::PathBuf;
+use std::process::Command;
+use tempfile::tempdir;
+
 fn main() {
-    let target = std::env::var("TARGET").expect("Could not find target");
-    println!("Target triple: {}", target);
-    let manifest_dir = std::env::var("CARGO_MANIFEST_DIR").unwrap();
-    // Detect the operating system
-    if cfg!(target_os = "macos") {
-        create_symlink_macos();
-        println!("cargo:rustc-link-search=native={manifest_dir}/lib/{target}",);
-        println!("cargo:rustc-link-lib=dylib=clang_rt.rtsan_osx_dynamic");
-    } else if cfg!(target_os = "linux") {
-        println!("cargo:rustc-link-search=native={manifest_dir}/lib/{target}",);
-        println!("cargo:rustc-link-lib=static=clang_rt.rtsan");
-    } else {
-        panic!("You are running on an unsupported operating system.");
+    // Check for required tools
+    check_tool("git");
+    check_tool("cmake");
+    check_tool("ninja");
+
+    // Get target OS and architecture
+    let target_os = env::var("CARGO_CFG_TARGET_OS").unwrap();
+    let target_arch = env::var("CARGO_CFG_TARGET_ARCH").unwrap();
+
+    if target_os == "macos" {
+        check_tool("install_name_tool");
     }
 
-    // rerun build script
-    println!(
-        "cargo:rerun-if-changed={manifest_dir}/lib/{target}/libclang_rt.rtsan_osx_dynamic.dylib"
+    // Set up paths
+    let out_dir = PathBuf::from(env::var("OUT_DIR").unwrap());
+
+    // Create a unique temporary directory
+    let temp_dir = tempdir().expect("Failed to create temporary directory");
+    let llvm_project_dir = temp_dir.path().join("llvm-project");
+
+    // Clone llvm-project into the temporary directory
+    run_command(
+        "git",
+        &[
+            "clone",
+            "-n",
+            "--depth=1",
+            "--filter=tree:0",
+            "https://github.com/llvm/llvm-project.git",
+            llvm_project_dir.to_str().unwrap(),
+        ],
+        ".",
     );
-    println!("cargo:rerun-if-changed={manifest_dir}/lib/{target}/libclang_rt.rtsan.a");
+
+    // Perform sparse checkout
+    run_command(
+        "git",
+        &[
+            "sparse-checkout",
+            "set",
+            "--no-cone",
+            "compiler-rt",
+            "cmake",
+        ],
+        llvm_project_dir.to_str().unwrap(),
+    );
+    run_command("git", &["checkout"], llvm_project_dir.to_str().unwrap());
+
+    // Build the library
+    let build_dir = llvm_project_dir.join("build");
+    if !build_dir.exists() {
+        fs::create_dir(&build_dir).expect("Failed to create build directory");
+    }
+    run_command(
+        "cmake",
+        &[
+            "-G",
+            "Ninja",
+            "-DCMAKE_BUILD_TYPE=Release",
+            "-DCOMPILER_RT_BUILD_SANITIZERS=ON",
+            "-DLLVM_TARGETS_TO_BUILD=Native",
+            "../compiler-rt",
+        ],
+        build_dir.to_str().unwrap(),
+    );
+    run_command("ninja", &["rtsan"], build_dir.to_str().unwrap());
+
+    // Locate the built library
+    let lib_path = if target_os == "linux" {
+        build_dir.join(format!("lib/linux/libclang_rt.rtsan-{}.a", target_arch))
+    } else {
+        build_dir.join("lib/apple/libclang_rt.rtsan_osx_dynamic.dylib") // TODO: check
+    };
+
+    if !lib_path.exists() {
+        panic!("Built library not found at {:?}", lib_path);
+    }
+
+    // Copy the library to OUT_DIR
+    let lib_name = lib_path.file_name().unwrap();
+    let dest_lib_path = out_dir.join(lib_name);
+    fs::copy(&lib_path, &dest_lib_path).expect("Failed to copy library to OUT_DIR");
+
+    // Link the library
+    println!("cargo:rustc-link-search=native={}", out_dir.display());
+
+    if target_os == "linux" {
+        let lib_stem = lib_name
+            .to_str()
+            .unwrap()
+            .trim_start_matches("lib")
+            .trim_end_matches(".a");
+        println!("cargo:rustc-link-lib=static={}", lib_stem);
+    } else {
+        // Adjust install_name for macOS
+        run_command(
+            "install_name_tool",
+            &[
+                "-id",
+                "@rpath/libclang_rt.rtsan_osx_dynamic.dylib",
+                dest_lib_path.to_str().unwrap(),
+            ],
+            ".",
+        );
+
+        // Link the dylib
+        println!(
+            "cargo:rustc-link-lib=dylib={}",
+            lib_name.to_str().unwrap().trim_end_matches(".dylib")
+        );
+
+        // Set rpath to OUT_DIR
+        println!("cargo:rustc-link-arg=-Wl,-rpath,{}", out_dir.display());
+    }
 }
 
-fn create_symlink_macos() {
-    // Get the home directory
-    let home_dir = std::env::var("HOME").expect("Could not get HOME directory");
-    let lib_dir = std::path::PathBuf::from(home_dir).join("lib");
-
-    // Create ~/lib/ if it doesn't exist
-    if !lib_dir.exists() {
-        std::fs::create_dir_all(&lib_dir).expect("Failed to create ~/lib directory");
+fn check_tool(tool: &str) {
+    if Command::new(tool).arg("--version").output().is_err() {
+        println!(
+            "cargo:warning=Required tool '{}' not found in PATH. Please install it.",
+            tool
+        );
     }
+}
 
-    // Path to your dynamic library
-    let manifest_dir =
-        std::env::var("CARGO_MANIFEST_DIR").expect("Could not get CARGO_MANIFEST_DIR");
-    let lib_source = std::path::PathBuf::from(manifest_dir)
-        .join("lib/aarch64-apple-darwin/libclang_rt.rtsan_osx_dynamic.dylib");
-
-    // Path to symlink in ~/lib/
-    let lib_symlink = lib_dir.join("libclang_rt.rtsan_osx_dynamic.dylib");
-
-    // Remove the existing symlink if it exists
-    if lib_symlink.exists() {
-        std::fs::remove_file(&lib_symlink).expect("Failed to remove existing symlink");
+fn run_command(cmd: &str, args: &[&str], dir: &str) {
+    let status = Command::new(cmd)
+        .args(args)
+        .current_dir(dir)
+        .status()
+        .expect(&format!("Failed to run '{}'", cmd));
+    if !status.success() {
+        panic!("Command '{}' failed with status {:?}", cmd, status);
     }
-
-    // Create the symlink
-    std::os::unix::fs::symlink(lib_source, &lib_symlink)
-        .expect("Failed to create symlink in ~/lib");
 }
