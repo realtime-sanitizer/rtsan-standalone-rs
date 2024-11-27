@@ -139,7 +139,7 @@ fn run_command(cmd: &str, args: &[&str], dir: &str) {
         .args(args)
         .current_dir(dir)
         .status()
-        .expect(&format!("Failed to run '{}'", cmd));
+        .unwrap_or_else(|_| panic!("Failed to run '{}'", cmd));
     if !status.success() {
         panic!("Command '{}' failed with status {:?}", cmd, status);
     }
