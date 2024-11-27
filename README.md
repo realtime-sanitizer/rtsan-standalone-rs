@@ -1,11 +1,7 @@
 # rtsan-standalone-rs
 
-Rust crate repository for the RTSan standalone library.
-
-## Overview
-
-This crate demonstrates how to integrate RTSan into your Rust application for
-detecting real-time violations.
+This is a Rust wrapper for RTSan to detect real-time violations in your
+application.
 
 ## Prerequisites
 
@@ -18,7 +14,8 @@ are installed:
 
 ## Example Usage
 
-The included example project illustrates the integration of RTSan.
+The included example project illustrates the integration of RTSan in your
+project.
 
 ### Running the Example
 
@@ -44,7 +41,7 @@ cargo run --package example --features rtsan
 ```
 
 With the `rtsan` feature enabled, the application will crash if a real-time
-violation is detected. For example, it may produce the following error:
+violation is detected. In this case, it should produce the following error:
 
 ```
 ==70107==ERROR: RealtimeSanitizer: blocking-call
