@@ -48,7 +48,7 @@ RTSan was invented by David Trevelyan and Ali Barker, the C++ upstream
 implementation was authored by David Trevelyan and Chris Apple, and the Rust
 wrapper by Stephan Eckes. Feedback and contributions are welcome!
 
-- **Discord**: RealtimeSanitize (RTSan) Discord Channel
+- **Discord**: `RealtimeSanitizer (RTSan)` Discord Channel
 - **Email**: [realtime.sanitizer@gmail.com](mailto:realtime.sanitizer@gmail.com)
 - **GitHub Issues**: Submit your queries or suggestions directly in this
   repository.
