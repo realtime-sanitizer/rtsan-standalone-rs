@@ -3,6 +3,7 @@ name = "rtsan"
 description = "A Rust wrapper for RTSan standalone"
 version.workspace = true
 edition.workspace = true
+rust-version.workspace = true
 authors.workspace = true
 license.workspace = true
 repository.workspace = true
@@ -19,6 +20,7 @@ members = ["crates/rtsan-sys", "examples/integration-example"]
 [workspace.package]
 version = "0.1.0"
 edition = "2021"
+rust-version = "1.77"
 authors = ["Stephan Eckes <stephan@neodsp.com>"]
 license = "Apache-2.0"
 repository = "https://github.com/realtime-sanitizer/rtsan-standalone-rs"
