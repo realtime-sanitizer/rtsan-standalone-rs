@@ -346,7 +346,7 @@ impl<T> Mutex<T> {
     /// let mutex = Mutex::new(0);
     /// assert_eq!(mutex.into_inner().unwrap(), 0);
     /// ```
-    pub fn into_innter(self) -> LockResult<T> {
+    pub fn into_inner(self) -> LockResult<T> {
         self.inner.into_inner()
     }
 
