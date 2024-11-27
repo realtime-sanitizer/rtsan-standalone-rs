@@ -8,7 +8,7 @@ fn main() {
     // Check for required tools
     check_tool("git");
     check_tool("cmake");
-    check_tool("ninja");
+    check_tool("make");
 
     // Get target OS and architecture
     let target_os = env::var("CARGO_CFG_TARGET_OS").unwrap();
@@ -62,7 +62,7 @@ fn main() {
         "cmake",
         &[
             "-G",
-            "Ninja",
+            "Unix Makefiles",
             "-DCMAKE_BUILD_TYPE=Release",
             "-DCOMPILER_RT_BUILD_SANITIZERS=ON",
             "-DLLVM_TARGETS_TO_BUILD=Native",
@@ -70,13 +70,13 @@ fn main() {
         ],
         build_dir.to_str().unwrap(),
     );
-    run_command("ninja", &["rtsan"], build_dir.to_str().unwrap());
+    run_command("make", &["-j8", "rtsan"], build_dir.to_str().unwrap());
 
     // Locate the built library
     let lib_path = if target_os == "linux" {
         build_dir.join(format!("lib/linux/libclang_rt.rtsan-{}.a", target_arch))
     } else {
-        build_dir.join("lib/apple/libclang_rt.rtsan_osx_dynamic.dylib") // TODO: check
+        build_dir.join("lib/darwin/libclang_rt.rtsan_osx_dynamic.dylib")
     };
 
     if !lib_path.exists() {
@@ -113,7 +113,11 @@ fn main() {
         // Link the dylib
         println!(
             "cargo:rustc-link-lib=dylib={}",
-            lib_name.to_str().unwrap().trim_end_matches(".dylib")
+            lib_name
+                .to_str()
+                .unwrap()
+                .trim_start_matches("lib")
+                .trim_end_matches(".dylib")
         );
 
         // Set rpath to OUT_DIR
