@@ -7,6 +7,15 @@ Rust crate repository for the RTSan standalone library.
 This crate demonstrates how to integrate RTSan into your Rust application for
 detecting real-time violations.
 
+## Prerequisites
+
+This crate currently builds only on Linux and macOS. Ensure the following tools
+are installed:
+
+- git
+- make
+- cmake (version 3.20.0 or higher)
+
 ## Example Usage
 
 The included example project illustrates the integration of RTSan.
