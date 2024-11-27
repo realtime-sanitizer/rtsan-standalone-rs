@@ -1,8 +1,30 @@
+[package]
+name = "rtsan"
+description = "A Rust wrapper for RTSan standalone"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+readme.workspace = true
+
+[dependencies]
+rtsan-macros = { workspace = true }
+rtsan-sys = { workspace = true }
+
 [workspace]
-members = ["crates/rtsan", "crates/rtsan-sys", "example"]
 resolver = "2"
+members = ["crates/rtsan-sys", "examples/integration-example"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+authors = ["Stephan Eckes <stephan@neodsp.com>"]
+license = "Apache-2.0"
+repository = "https://github.com/realtime-sanitizer/rtsan-standalone-rs"
+readme = "README.md"
 
 [workspace.dependencies]
-rtsan = { path = "crates/rtsan" }
+rtsan = { path = "." }
 rtsan-macros = { path = "crates/rtsan-macros" }
 rtsan-sys = { path = "crates/rtsan-sys" }

@@ -1,54 +1,54 @@
 # rtsan-standalone-rs
 
-This is a Rust wrapper for RTSan to detect real-time violations in your
-application.
+This is a wrapper for the standalone version of RealtimeSanitizer (RTSan) to
+detect real-time violations in Rust applications.
 
-## Prerequisites
+## Usage
 
-This crate currently builds only on Linux and macOS. Ensure the following tools
-are installed:
+RTSan currently supports Linux and macOS. Ensure you have the following tools
+installed: `git`, `make`, and `cmake` (3.20.0 or higher).
 
-- git
-- make
-- cmake (version 3.20.0 or higher)
-
-## Example Usage
-
-The included example project illustrates the integration of RTSan in your
-project.
-
-### Running the Example
-
-Run the example without the RTSan feature:
+To use RTSan, add it as a dependency:
 
 ```bash
-cargo run --package example
+cargo add rtsan --git https://github.com/realtime-sanitizer/rtsan-standalone-rs --branch dev
 ```
 
-This will execute successfully and print:
+Alternatively, add it to your `Cargo.toml`:
 
+```toml
+[dependencies]
+rtsan = { git = "https://github.com/realtime-sanitizer/rtsan-standalone-rs", branch = "dev" }
 ```
-Example finished successfully!
-```
 
-### Enabling the RTSan Feature
+We recommend using RTSan as an optional dependency behind a feature flag or as a
+dev dependency to avoid shipping it in production builds. For an integration
+example, refer to the
+[integration example readme](examples/integration-example/README.md).
 
-To enable RTSan for detecting real-time violations in the `process` function,
-activate the `rtsan` feature:
+## Examples
+
+Explore various features of RTSan through the examples provided. For instance,
+to run the `vector` example:
 
 ```bash
-cargo run --package example --features rtsan
+cargo run --example vector
 ```
 
-With the `rtsan` feature enabled, the application will crash if a real-time
-violation is detected. In this case, it should produce the following error:
+To see how to integrate RTSan with feature flags, check the integration example
+and run it with:
 
+```bash
+cargo run --package integration-example --features rtsan
 ```
-==70107==ERROR: RealtimeSanitizer: blocking-call
-Call to blocking function `lock` in real-time context!
-```
 
-### Additional Examples
+## Contact
 
-For more examples showcasing various features of RTSan, refer to the
-[examples directory](crates/rtsan/examples).
+RTSan was invented by David Trevelyan and Ali Barker, the C++ upstream
+implementation was authored by David Trevelyan and Chris Apple, and the Rust
+wrapper by Stephan Eckes. Feedback and contributions are welcome!
+
+- **Discord**: RealtimeSanitize (RTSan) Discord Channel
+- **Email**: [realtime.sanitizer@gmail.com](mailto:realtime.sanitizer@gmail.com)
+- **GitHub Issues**: Submit your queries or suggestions directly in this
+  repository.
