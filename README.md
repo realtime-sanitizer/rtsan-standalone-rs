@@ -29,6 +29,13 @@ dev dependency to avoid shipping it in production builds. For an integration
 example, refer to the
 [integration-example README](examples/integration-example/README.md).
 
+## Features
+
+The `rtsan-std-types` feature is enabled by default and re-exports the entire
+`std` library. This allows marking functions as blocking, which are not
+currently detected by the sanitizer, such as `Mutex::lock`. Refer to the `mutex`
+example or `integration-example` for further assistance.
+
 ## Examples
 
 Explore various features of RTSan through the examples provided. For instance,
