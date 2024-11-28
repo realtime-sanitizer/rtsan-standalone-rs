@@ -6,6 +6,17 @@ use proc_macro::TokenStream;
 use quote::quote;
 use syn::{parse_macro_input, ItemFn};
 
+/// Enables the sanitizer in your function.
+///
+/// # Example
+///
+/// ```
+/// #[rtsan::non_blocking]
+/// fn process() {
+///     // this works as it is real-time safe
+///     let _ = [0.0; 256];
+/// }
+/// ```
 #[proc_macro_attribute]
 pub fn non_blocking(_attr: TokenStream, item: TokenStream) -> TokenStream {
     // Parse the input token stream as a function
@@ -35,6 +46,17 @@ pub fn non_blocking(_attr: TokenStream, item: TokenStream) -> TokenStream {
     TokenStream::from(output)
 }
 
+/// Marks a function as not real-time safe.
+///
+/// # Example
+///
+/// ```
+/// #[rtsan::blocking]
+/// fn process() {
+///     // this will fail although it is real-time safe
+///     let _ = [0.0; 256];
+/// }
+/// ```
 #[proc_macro_attribute]
 pub fn blocking(_attr: TokenStream, item: TokenStream) -> TokenStream {
     // Parse the input token stream as a function
@@ -60,6 +82,17 @@ pub fn blocking(_attr: TokenStream, item: TokenStream) -> TokenStream {
     TokenStream::from(output)
 }
 
+/// Disables the sanitizer for this function.
+///
+/// # Example
+///
+/// ```
+/// #[rtsan::no_sanitize]
+/// fn process() {
+///     // this won't fail
+///     let _ = vec![0.0; 256];
+/// }
+/// ```
 #[proc_macro_attribute]
 pub fn no_sanitize(_attr: TokenStream, item: TokenStream) -> TokenStream {
     // Parse the input token stream as a function

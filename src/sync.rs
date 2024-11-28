@@ -30,8 +30,8 @@ pub use std::sync::*;
 /// [`lock`]: Self::lock
 /// [`try_lock`]: Self::try_lock
 /// [`unwrap()`]: Result::unwrap
-/// [`PoisonError`]: super::PoisonError
-/// [`into_inner`]: super::PoisonError::into_inner
+/// [`PoisonError`]: std::sync::PoisonError
+/// [`into_inner`]: std::sync::PoisonError::into_inner
 ///
 /// # Examples
 ///

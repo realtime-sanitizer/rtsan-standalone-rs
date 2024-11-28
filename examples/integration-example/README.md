@@ -28,7 +28,8 @@ pub fn process(&mut self, audio: &mut [f32]) { }
 ```
 
 To detect locks in a Mutex currently the `rtsan` types have to be used. The
-crate re-exports the `std` library for simplicity.
+crate re-exports the `std` library for simplicity, if the feature
+`rtsan-std-types` is enabled.
 
 ## Running the Example
 

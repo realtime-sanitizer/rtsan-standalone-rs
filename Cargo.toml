@@ -13,6 +13,10 @@ readme.workspace = true
 rtsan-macros = { workspace = true }
 rtsan-sys = { workspace = true }
 
+[features]
+default = ["rtsan-std-types"]
+rtsan-std-types = [""]
+
 [workspace]
 resolver = "2"
 members = ["crates/rtsan-sys", "examples/integration-example"]
