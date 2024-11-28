@@ -1,59 +1,53 @@
 # RTSan Integration Example
 
-This project demonstrates integrating RTSan into your application using a
-feature flag.
+This project demonstrates how to integrate RTSan into your production code using
+a feature flag.
 
 ## Setup
 
-Update your `Cargo.toml`:
+Update your `Cargo.toml` file as follows:
 
 ```toml
 [dependencies]
-rtsan = { git = "https://github.com/realtime-sanitizer/rtsan-standalone-rs", branch = "dev", optional = true }
+rtsan = { git = "https://github.com/realtime-sanitizer/rtsan-standalone-rs", branch = "dev" }
 
 [features]
-rtsan = ["dep:rtsan"]
+sanitize = ["rtsan/sanitize"]
 ```
 
-## Usage
-
-Conditionally use RTSan in your application:
-
-```rust
-#[cfg(feature = "rtsan")]
-use rtsan as std;
-
-#[cfg_attr(feature = "rtsan", rtsan::non_blocking)]
-pub fn process(&mut self, audio: &mut [f32]) { }
-```
-
-To detect locks in a Mutex currently the `rtsan` types have to be used. The
-crate re-exports the `std` library for simplicity, if the feature
-`rtsan-std-types` is enabled.
+With this setup, all RTSan macros and functions can remain in your production
+code. By default, these functions will be empty definitions and will only work
+when you activate the `sanitize` feature.
 
 ## Running the Example
 
-Run without RTSan:
+### Running Without RTSan
 
-```bash
+To run the example without RTSan:
+
+```sh
 cargo run --package integration-example
 ```
 
 Expected output:
 
-```
+```sh
 Example finished successfully!
 ```
 
-Enable RTSan for detecting real-time violations:
+### Running With RTSan Enabled
 
-```bash
+To enable RTSan and detect real-time violations, run the example with the
+`rtsan` feature:
+
+```sh
 cargo run --package integration-example --features rtsan
 ```
 
-On detecting a violation, it produces an error like:
+If a real-time violation is detected, RTSan will produce an error like the
+following:
 
-```
+```sh
 ==70107==ERROR: RealtimeSanitizer: blocking-call
 Call to blocking function `lock` in real-time context!
 ```

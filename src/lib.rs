@@ -78,12 +78,11 @@
 
 #![allow(clippy::needless_doctest_main)]
 
-#[cfg(feature = "rtsan-std-types")]
 pub use std::*;
 
 pub use rtsan_macros::*;
 
-#[cfg(feature = "rtsan-std-types")]
+#[cfg(feature = "sanitize")]
 pub mod sync;
 
 /// Enter real-time context.
@@ -97,18 +96,21 @@ pub mod sync;
 /// ```
 /// fn process() {
 ///     rtsan::realtime_enter();
-///     let _ = [0.0; 256];
+///     let _ = vec![0.0; 256]; // oops!
 ///     rtsan::realtime_exit();
 /// }
 ///
 /// // Macro usage preferred
 /// #[rtsan::non_blocking]
 /// fn process_preferred() {
-///     let _ = [0.0; 256];
+///     let _ = vec![0.0; 256]; // oops!
 /// }
 /// ```
 pub fn realtime_enter() {
-    unsafe { rtsan_sys::__rtsan_realtime_enter() };
+    #[cfg(feature = "sanitize")]
+    unsafe {
+        rtsan_sys::__rtsan_realtime_enter();
+    }
 }
 
 /// Exit the real-time context.
@@ -121,18 +123,21 @@ pub fn realtime_enter() {
 /// ```
 /// fn process() {
 ///     rtsan::realtime_enter();
-///     let _ = [0.0; 256];
+///     let _ = vec![0.0; 256]; // oops!
 ///     rtsan::realtime_exit();
 /// }
 ///
 /// // Macro usage preferred
 /// #[rtsan::non_blocking]
 /// fn process_preferred() {
-///     let _ = [0.0; 256];
+///     let _ = vec![0.0; 256]; // oops!
 /// }
 /// ```
 pub fn realtime_exit() {
-    unsafe { rtsan_sys::__rtsan_realtime_exit() };
+    #[cfg(feature = "sanitize")]
+    unsafe {
+        rtsan_sys::__rtsan_realtime_exit();
+    }
 }
 
 /// Disable all RTSan error reporting in an otherwise real-time context.
@@ -146,10 +151,8 @@ pub fn realtime_exit() {
 ///     rtsan::realtime_enter();
 ///
 ///     rtsan::disable();
-///     let mut data = Vec::with_capacity(1);
+///     let mut data = vec![0.0; 16]; // ok
 ///     rtsan::enable();
-///
-///     data.push(0.0);
 ///
 ///     rtsan::realtime_exit();
 /// }
@@ -157,15 +160,15 @@ pub fn realtime_exit() {
 /// // Macro usage preferred
 /// #[rtsan::non_blocking]
 /// fn process_preferred() {
-///     let mut data = vec![];
 ///     rtsan::disabled_scope!({
-///         data = Vec::with_capacity(1);
+///         let mut data = vec![0.0; 16]; // ok
 ///     });
-///     data.push(0.0);
 /// }
-/// ```
 pub fn disable() {
-    unsafe { rtsan_sys::__rtsan_disable() };
+    #[cfg(feature = "sanitize")]
+    unsafe {
+        rtsan_sys::__rtsan_disable();
+    }
 }
 
 /// Re-enable all RTSan error reporting.
@@ -179,10 +182,8 @@ pub fn disable() {
 ///     rtsan::realtime_enter();
 ///
 ///     rtsan::disable();
-///     let mut data = Vec::with_capacity(1);
+///     let mut data = vec![0.0; 16]; // ok
 ///     rtsan::enable();
-///
-///     data.push(0.0);
 ///
 ///     rtsan::realtime_exit();
 /// }
@@ -190,15 +191,15 @@ pub fn disable() {
 /// // Macro usage preferred
 /// #[rtsan::non_blocking]
 /// fn process_preferred() {
-///     let mut data = vec![];
 ///     rtsan::disabled_scope!({
-///         data = Vec::with_capacity(1);
+///         let mut data = vec![0.0; 16]; // ok
 ///     });
-///     data.push(0.0);
 /// }
-/// ```
 pub fn enable() {
-    unsafe { rtsan_sys::__rtsan_enable() };
+    #[cfg(feature = "sanitize")]
+    unsafe {
+        rtsan_sys::__rtsan_enable();
+    }
 }
 
 /// Initializes rtsan if it has not been initialized yet.
@@ -213,7 +214,10 @@ pub fn enable() {
 /// }
 /// ```
 pub fn ensure_initialized() {
-    unsafe { rtsan_sys::__rtsan_ensure_initialized() };
+    #[cfg(feature = "sanitize")]
+    unsafe {
+        rtsan_sys::__rtsan_ensure_initialized();
+    }
 }
 
 /// Allows the user to specify a function as not-real-time-safe
@@ -235,13 +239,19 @@ pub fn ensure_initialized() {
 /// #[rtsan::blocking]
 /// fn my_blocking_function_preferred() {}
 /// ```
+#[allow(unused_variables)]
 pub fn notify_blocking_call(function_name: &'static str) {
-    if !function_name.ends_with('\0') {
-        panic!("`rtsan::notify_blocking_call` requires a null-terminated function name (e.g., \"my_function_name\\0\").");
+    #[cfg(feature = "sanitize")]
+    {
+        if !function_name.ends_with('\0') {
+            panic!("`rtsan::notify_blocking_call` requires a null-terminated function name (e.g., \"my_function_name\\0\").");
+        }
+        unsafe {
+            rtsan_sys::__rtsan_notify_blocking_call(
+                function_name.as_ptr() as *const std::ffi::c_char
+            );
+        }
     }
-    unsafe {
-        rtsan_sys::__rtsan_notify_blocking_call(function_name.as_ptr() as *const std::ffi::c_char)
-    };
 }
 
 /// Disable all RTSan error reporting in an otherwise real-time context.
@@ -250,12 +260,10 @@ pub fn notify_blocking_call(function_name: &'static str) {
 ///
 /// ```
 /// #[rtsan::non_blocking]
-/// fn process() {
-///     let mut data = vec![];
+/// fn process_preferred() {
 ///     rtsan::disabled_scope!({
-///         data = Vec::with_capacity(1);
+///         let mut data = vec![0.0; 16]; // ok
 ///     });
-///     data.push(0.0);
 /// }
 /// ```
 #[macro_export]

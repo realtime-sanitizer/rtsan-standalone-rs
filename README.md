@@ -10,11 +10,11 @@ Mark a real-time function with the `#[rtsan::non_blocking]` macro:
 ```rust
 #[rtsan::non_blocking]
 fn process(data: &mut [f32]) {
-  let _ = vec![0.0; 16]; // oops!
+    let _ = vec![0.0; 16]; // oops!
 }
 ```
 
-At run-time, real-time violations are presented with a stack trace:
+At runtime, real-time violations are presented with a stack trace:
 
 ```bash
 ==283082==ERROR: RealtimeSanitizer: unsafe-library-call
@@ -28,62 +28,82 @@ Intercepted call to real-time unsafe function `calloc` in real-time context!
 SUMMARY: RealtimeSanitizer: unsafe-library-call /rustc/f6e511eec7342f59a25f7c0534f1dbea00d01b14/library/alloc/src/alloc.rs:170:14 in alloc::alloc::alloc_zeroed::hf760e6484fdf32c8
 ```
 
+Currently, not all blocking functions in the standard library can be detected
+(e.g., `Mutex::lock`). As a workaround, this library re-exports the standard
+library and wraps some of its types to enable detection for more blocking
+functions. To switch to the RTSan types, add the following to the top of your
+file:
+
+```rust
+use rtsan as std;
+
+use std::sync::Mutex;
+```
+
+Now you can use `std::sync::Mutex` and all other std types from rtsan. Just
+beware, that when using `::std::sync::Mutex` the orginal Mutex will be used,
+without sanitizing.
+
 ## Setup
 
 RTSan currently supports Linux and macOS. Ensure you have the following tools
-installed: `git`, `make`, and `cmake` (3.20.0 or higher).
+installed: `git`, `make`, and `cmake` (version 3.20.0 or higher).
 
-To use RTSan, add it as a dependency:
-
-```bash
-cargo add rtsan --git https://github.com/realtime-sanitizer/rtsan-standalone-rs --branch dev
-```
-
-Alternatively, add it to your `Cargo.toml`:
+To use RTSan, add it as a dependency in your `Cargo.toml` file and add the
+`sanitize` feature to your project:
 
 ```toml
 [dependencies]
 rtsan = { git = "https://github.com/realtime-sanitizer/rtsan-standalone-rs", branch = "dev" }
+
+[features]
+sanitize = ["rtsan/sanitize"]
+```
+
+To run your project with sanitizing enabled, execute:
+
+```sh
+cargo run --features sanitize
 ```
 
 The initial build of `rtsan-sys` may take a few minutes to compile the LLVM
 libraries.
 
-We recommend using RTSan as an optional dependency behind a feature flag or as a
-dev dependency to avoid shipping it in production builds. For an integration
-example, refer to the
-[integration-example README](examples/integration-example/README.md).
+For more help, refer to the integration example
+[README](examples/integration-example/README.md).
 
 ## Features
 
-The `rtsan-std-types` feature is enabled by default and re-exports the entire
-`std` library. This allows marking functions as blocking, which are not
-currently detected by the sanitizer, such as `Mutex::lock`. Refer to the `mutex`
-example or `integration-example` for further assistance.
+The `sanitize` feature allows you to enable or disable sanitizing for your
+project. This ensures that all RTSan functions and macros can remain in your
+production code without impacting performance when the feature is disabled.
 
 ## Examples
 
-Explore various features of RTSan through the examples provided. For instance,
-to run the `vector` example:
+Explore the various possibilities with RTSan through the provided examples. For
+instance, to run the [`vector`](examples/vector.rs) example, execute:
 
-```bash
-cargo run --example vector
+```sh
+cargo run --example vector --features sanitize
 ```
 
-To see how to integrate RTSan with feature flags, check the integration example
-and run it with:
+The [integration example](examples/integration-example/) demonstrates how to
+conditionally build the sanitizer into your project:
 
-```bash
-cargo run --package integration-example --features rtsan
+```sh
+cargo run --package integration-example --features sanitize
 ```
+
+All examples should fail with the `sanitize` feature enabled and run correctly
+without it.
 
 ## Contact
 
-RTSan was invented by David Trevelyan and Ali Barker, the C++ upstream
-implementation was authored by David Trevelyan and Chris Apple, and the Rust
-wrapper by Stephan Eckes. Feedback and contributions are welcome!
+RTSan was invented by David Trevelyan and Ali Barker. The C++ upstream
+implementation was authored by David Trevelyan and Chris Apple, while the Rust
+wrapper was developed by Stephan Eckes. Feedback and contributions are welcome!
 
 - **Discord**: `RealtimeSanitizer (RTSan)` Discord Channel
 - **Email**: [realtime.sanitizer@gmail.com](mailto:realtime.sanitizer@gmail.com)
-- **GitHub Issues**: Submit your queries or suggestions directly in this
+- **GitHub Issues**: Submit your queries or suggestions directly to this
   repository.

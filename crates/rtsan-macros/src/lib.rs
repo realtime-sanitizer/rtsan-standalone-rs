@@ -16,8 +16,7 @@ use syn::{parse_macro_input, ItemFn};
 /// ```
 /// #[rtsan::non_blocking]
 /// fn process() {
-///     // this works as it is real-time safe
-///     let _ = [0.0; 256];
+///     let _ = vec![0.0; 256]; // oops
 /// }
 /// ```
 #[proc_macro_attribute]
@@ -55,10 +54,7 @@ pub fn non_blocking(_attr: TokenStream, item: TokenStream) -> TokenStream {
 ///
 /// ```
 /// #[rtsan::blocking]
-/// fn process() {
-///     // this will fail although it is real-time safe
-///     let _ = [0.0; 256];
-/// }
+/// fn my_blocking_function() {}
 /// ```
 #[proc_macro_attribute]
 pub fn blocking(_attr: TokenStream, item: TokenStream) -> TokenStream {
@@ -92,8 +88,7 @@ pub fn blocking(_attr: TokenStream, item: TokenStream) -> TokenStream {
 /// ```
 /// #[rtsan::no_sanitize]
 /// fn process() {
-///     // this won't fail
-///     let _ = vec![0.0; 256];
+///     let _ = vec![0.0; 256]; // ok!
 /// }
 /// ```
 #[proc_macro_attribute]

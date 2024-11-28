@@ -1,6 +1,7 @@
-// For tracking blocking things like `Mutex::lock`,
-// currently the types from rtsan have to be used.
-#[cfg(feature = "rtsan")]
+// Use the re-exported standard library from RTSan,
+// allowing RTSan to report errors on standard functions
+// that cannot otherwise be detected (e.g., `std::Mutex::lock`).
+// This can remain enabled in production.
 use rtsan as std;
 
 use std::sync::{Arc, Mutex};
@@ -18,12 +19,13 @@ impl Default for MyProcessor {
 }
 
 impl MyProcessor {
-    /// Add the `rtsan::non_blocking` macro to the process function,
-    /// in case the rtsan feature is activated
-    #[cfg_attr(feature = "rtsan", rtsan::non_blocking)]
+    /// Add the `rtsan::non_blocking` macro to the process function.
+    /// In case the default-feature `sanitize` is not provided,
+    /// this macro won't do anything, so it can stay in production code.
+    #[rtsan::non_blocking]
     pub fn process(&mut self, audio: &mut [f32]) {
-        assert_eq!(audio.len(), 256);
-        let guard = self.big_data.lock().unwrap();
+        assert_eq!(audio.len(), 256); // wrong assertions and panics will trigger the sanitizer before the panic message is printed!
+        let guard = self.big_data.lock().unwrap(); // oops !
         for (output, input) in audio.iter_mut().zip(*guard) {
             *output *= input;
         }
@@ -31,7 +33,7 @@ impl MyProcessor {
 }
 
 fn main() {
-    #[cfg(feature = "rtsan")]
+    // call this always at the start of your program
     rtsan::ensure_initialized();
 
     let mut processor = MyProcessor::default();
