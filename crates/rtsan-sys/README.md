@@ -2,11 +2,9 @@
 
 Unsafe Rust bindings for the RTSan standalone library.
 
-## Supported Pre-built Targets
+## Supported Targets
 
-### `x86_64-unknown-linux-gnu`
-
-- **Minimum Required GLIBC Version**: 2.31 (e.g., Ubuntu 20.04 or newer)
+Currently this crate only works on Linux and macOS.
 
 ## Generating Bindings
 
