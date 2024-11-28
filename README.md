@@ -5,10 +5,10 @@ detect real-time violations in Rust applications.
 
 ## Usage
 
-Mark a real-time function with the `#[rtsan::non_blocking]` macro:
+Mark a real-time function with the `#[rtsan::nonblocking]` macro:
 
 ```rust
-#[rtsan::non_blocking]
+#[rtsan::nonblocking]
 fn process(data: &mut [f32]) {
     let _ = vec![0.0; 16]; // oops!
 }

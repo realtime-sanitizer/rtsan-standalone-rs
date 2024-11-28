@@ -14,13 +14,13 @@ use syn::{parse_macro_input, ItemFn};
 /// # Example
 ///
 /// ```
-/// #[rtsan::non_blocking]
+/// #[rtsan::nonblocking]
 /// fn process() {
 ///     let _ = vec![0.0; 256]; // oops
 /// }
 /// ```
 #[proc_macro_attribute]
-pub fn non_blocking(_attr: TokenStream, item: TokenStream) -> TokenStream {
+pub fn nonblocking(_attr: TokenStream, item: TokenStream) -> TokenStream {
     // Parse the input token stream as a function
     let input = parse_macro_input!(item as ItemFn);
 

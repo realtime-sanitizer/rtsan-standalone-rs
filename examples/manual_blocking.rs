@@ -4,7 +4,7 @@
 fn blocking_function() {}
 
 // add the nonblocking macro to activate the sanitizer for this function
-#[rtsan::non_blocking]
+#[rtsan::nonblocking]
 fn realtime_function() {
     blocking_function(); // oops!
 }

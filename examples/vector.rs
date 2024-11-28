@@ -1,5 +1,5 @@
 // add the nonblocking macro to activate the sanitizer for this function
-#[rtsan::non_blocking]
+#[rtsan::nonblocking]
 fn my_function() {
     let _ = vec![0.0; 256]; // oops
 }

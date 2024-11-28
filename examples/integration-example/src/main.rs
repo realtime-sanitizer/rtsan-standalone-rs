@@ -19,10 +19,10 @@ impl Default for MyProcessor {
 }
 
 impl MyProcessor {
-    /// Add the `rtsan::non_blocking` macro to the process function.
+    /// Add the [`rtsan::nonblocking`] macro to the process function.
     /// In case the default-feature `sanitize` is not provided,
     /// this macro won't do anything, so it can stay in production code.
-    #[rtsan::non_blocking]
+    #[rtsan::nonblocking]
     pub fn process(&mut self, audio: &mut [f32]) {
         assert_eq!(audio.len(), 256); // wrong assertions and panics will trigger the sanitizer before the panic message is printed!
         let guard = self.big_data.lock().unwrap(); // oops !
