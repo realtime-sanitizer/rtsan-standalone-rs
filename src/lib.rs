@@ -86,9 +86,11 @@ pub use rtsan_macros::*;
 #[cfg(feature = "rtsan-std-types")]
 pub mod sync;
 
-/// Starts the sanitizer in your non-blocking function.
-/// Use [`realtime_exit`] to end the sanitization scope.
-/// The preferred usage is with the [`non_blocking`] macro.
+/// Enter real-time context.
+/// When in a real-time context, RTSan interceptors will error if realtime
+/// violations are detected. Calls to this method are injected at the code
+/// generation stage when RTSan is enabled.
+/// Corresponds to a [`non_blocking`] macro.
 ///
 /// # Example
 ///
@@ -99,7 +101,7 @@ pub mod sync;
 ///     rtsan::realtime_exit();
 /// }
 ///
-/// // Preferred macro usage
+/// // Macro usage preferred
 /// #[rtsan::non_blocking]
 /// fn process_preferred() {
 ///     let _ = [0.0; 256];
@@ -109,8 +111,10 @@ pub fn realtime_enter() {
     unsafe { rtsan_sys::__rtsan_realtime_enter() };
 }
 
-/// Ends the sanitizer that was started with [`realtime_enter`].
-/// The preferred usage is with the [`non_blocking`] macro.
+/// Exit the real-time context.
+/// When not in a real-time context, RTSan interceptors will simply forward
+/// intercepted method calls to the real methods.
+/// Corresponds to a [`non_blocking`] macro.
 ///
 /// # Example
 ///
@@ -121,7 +125,7 @@ pub fn realtime_enter() {
 ///     rtsan::realtime_exit();
 /// }
 ///
-/// // Preferred macro usage
+/// // Macro usage preferred
 /// #[rtsan::non_blocking]
 /// fn process_preferred() {
 ///     let _ = [0.0; 256];
@@ -131,10 +135,9 @@ pub fn realtime_exit() {
     unsafe { rtsan_sys::__rtsan_realtime_exit() };
 }
 
-/// Temporarily disables the sanitizer.
-/// Re-enable it with [`enable`]. The preferred usage is with the
-/// [`disabled_scope!`] macro for a small scope or with the [`no_sanitize`]
-/// macro for a whole function.
+/// Disable all RTSan error reporting in an otherwise real-time context.
+/// Must be paired with a call to [`enable`].
+/// Corresponds to a [`disabled_scope`] or [`no_sanitize`] macro.
 ///
 /// # Example
 ///
@@ -151,7 +154,7 @@ pub fn realtime_exit() {
 ///     rtsan::realtime_exit();
 /// }
 ///
-/// // Preferred macro usage
+/// // Macro usage preferred
 /// #[rtsan::non_blocking]
 /// fn process_preferred() {
 ///     let mut data = vec![];
@@ -165,8 +168,9 @@ pub fn disable() {
     unsafe { rtsan_sys::__rtsan_disable() };
 }
 
-/// Re-enables the sanitizer after it has been disabled with [`disable`].
-/// The preferred usage is with the [`disabled_scope`] macro.
+/// Re-enable all RTSan error reporting.
+/// Must follow a call to [`disable`].
+/// Corresponds to a [`disabled_scope`] or [`no_sanitize`] macro.
 ///
 /// # Example
 ///
@@ -183,7 +187,7 @@ pub fn disable() {
 ///     rtsan::realtime_exit();
 /// }
 ///
-/// // Preferred macro usage
+/// // Macro usage preferred
 /// #[rtsan::non_blocking]
 /// fn process_preferred() {
 ///     let mut data = vec![];
@@ -197,8 +201,9 @@ pub fn enable() {
     unsafe { rtsan_sys::__rtsan_enable() };
 }
 
-/// Initializes the realtime sanitizer. This function must be called as the first thing in your `main` function to ensure proper operation.
-/// On some platforms, the sanitizer may work without explicitly calling this function, but calling it is recommended for guaranteed behavior.
+/// Initializes rtsan if it has not been initialized yet.
+/// Used by the RTSan runtime to ensure that rtsan is initialized before any
+/// other rtsan functions are called.
 ///
 /// # Example
 ///
@@ -211,9 +216,9 @@ pub fn ensure_initialized() {
     unsafe { rtsan_sys::__rtsan_ensure_initialized() };
 }
 
-/// Manually informs the sanitizer that the current function is blocking.
-/// Provide the function name as a null-terminated string (e.g., `"my_function_name\0"`).
-/// The preferred usage is with the [`blocking`] macro.
+/// Allows the user to specify a function as not-real-time-safe
+/// Including this in the first line of a function definition is
+/// analogous to marking a function  with the [`blocking`] macro.
 ///
 /// # Panics
 ///
@@ -239,8 +244,7 @@ pub fn notify_blocking_call(function_name: &'static str) {
     };
 }
 
-/// Temporarily disables the sanitizer within a block of code.
-/// This macro is the preferred way to handle temporary disabling of the sanitizer.
+/// Disable all RTSan error reporting in an otherwise real-time context.
 ///
 /// # Example
 ///

@@ -6,7 +6,10 @@ use proc_macro::TokenStream;
 use quote::quote;
 use syn::{parse_macro_input, ItemFn};
 
-/// Enables the sanitizer in your function.
+/// Enter real-time context in your function.
+/// When in a real-time context, RTSan interceptors will error if realtime
+/// violations are detected. Calls to this method are injected at the code
+/// generation stage when RTSan is enabled.
 ///
 /// # Example
 ///
@@ -46,7 +49,7 @@ pub fn non_blocking(_attr: TokenStream, item: TokenStream) -> TokenStream {
     TokenStream::from(output)
 }
 
-/// Marks a function as not real-time safe.
+/// Allows the user to specify a function as not-real-time-safe.
 ///
 /// # Example
 ///
@@ -82,7 +85,7 @@ pub fn blocking(_attr: TokenStream, item: TokenStream) -> TokenStream {
     TokenStream::from(output)
 }
 
-/// Disables the sanitizer for this function.
+/// Disable all RTSan error reporting in an otherwise real-time context.
 ///
 /// # Example
 ///
