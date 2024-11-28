@@ -5,6 +5,31 @@ detect real-time violations in Rust applications.
 
 ## Usage
 
+Mark a real-time function with the `#[rtsan::non_blocking]` macro:
+
+```rust
+#[rtsan::non_blocking]
+fn process(data: &mut [f32]) {
+  let _ = vec![0.0; 16]; // oops!
+}
+```
+
+At run-time, real-time violations are presented with a stack trace:
+
+```bash
+==283082==ERROR: RealtimeSanitizer: unsafe-library-call
+Intercepted call to real-time unsafe function `calloc` in real-time context!
+    #0 0x55c0c3be8cf2 in calloc /tmp/.tmp6Qb4u2/llvm-project/compiler-rt/lib/rtsan/rtsan_interceptors_posix.cpp:470:34
+    #1 0x55c0c3be4e69 in alloc::alloc::alloc_zeroed::hf760e6484fdf32c8 /rustc/f6e511eec7342f59a25f7c0534f1dbea00d01b14/library/alloc/src/alloc.rs:170:14
+    #2 0x55c0c3be4e69 in alloc::alloc::Global::alloc_impl::hc0e9b7c86f5cad5c /rustc/f6e511eec7342f59a25f7c0534f1dbea00d01b14/library/alloc/src/alloc.rs:181:43
+    #3 0x55c0c3be56fb in _$LT$alloc..alloc..Global$u20$as$u20$core..alloc..Allocator$GT$::allocate_zeroed::h8f75ff921b519af6 /rustc/f6e511eec7342f59a25f7c0534f1dbea00d01b14/library/alloc/src/alloc.rs:246:9
+    ...
+    #27 0x55c0c3be2ab4 in _start (target/debug/examples/vector+0x2ab4) (BuildId: adb992a7e560cd00ef533c9333d3c033fb4a7c42)    
+SUMMARY: RealtimeSanitizer: unsafe-library-call /rustc/f6e511eec7342f59a25f7c0534f1dbea00d01b14/library/alloc/src/alloc.rs:170:14 in alloc::alloc::alloc_zeroed::hf760e6484fdf32c8
+```
+
+## Setup
+
 RTSan currently supports Linux and macOS. Ensure you have the following tools
 installed: `git`, `make`, and `cmake` (3.20.0 or higher).
 
