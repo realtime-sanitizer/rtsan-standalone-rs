@@ -125,6 +125,7 @@ pub mod sync;
 ///     let _ = vec![0.0; 256]; // oops!
 /// }
 /// ```
+#[inline]
 pub fn realtime_enter() {
     #[cfg(feature = "sanitize")]
     unsafe {
@@ -152,6 +153,7 @@ pub fn realtime_enter() {
 ///     let _ = vec![0.0; 256]; // oops!
 /// }
 /// ```
+#[inline]
 pub fn realtime_exit() {
     #[cfg(feature = "sanitize")]
     unsafe {
@@ -183,6 +185,7 @@ pub fn realtime_exit() {
 ///         let mut data = vec![0.0; 16]; // ok
 ///     });
 /// }
+#[inline]
 pub fn disable() {
     #[cfg(feature = "sanitize")]
     unsafe {
@@ -214,6 +217,7 @@ pub fn disable() {
 ///         let mut data = vec![0.0; 16]; // ok
 ///     });
 /// }
+#[inline]
 pub fn enable() {
     #[cfg(feature = "sanitize")]
     unsafe {
