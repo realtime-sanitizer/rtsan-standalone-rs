@@ -21,31 +21,37 @@ use syn::{parse_macro_input, ItemFn};
 /// ```
 #[proc_macro_attribute]
 pub fn nonblocking(_attr: TokenStream, item: TokenStream) -> TokenStream {
-    // Parse the input token stream as a function
-    let input = parse_macro_input!(item as ItemFn);
+    // Check for a feature flag at compile time
+    if cfg!(feature = "sanitize") {
+        // Parse the input token stream as a function
+        let input = parse_macro_input!(item as ItemFn);
 
-    // Extract the function signature and body
-    let attrs = input.attrs; // Attributes, including doc comments
-    let vis = input.vis; // Visibility modifier
-    let sig = input.sig; // Function signature (includes name, generics, and return type)
-    let block = input.block; // Function body
+        // Extract the function signature and body
+        let attrs = input.attrs; // Attributes, including doc comments
+        let vis = input.vis; // Visibility modifier
+        let sig = input.sig; // Function signature (includes name, generics, and return type)
+        let block = input.block; // Function body
 
-    // Generate the transformed function
-    let output = quote! {
-        #(#attrs)*
-        #vis #sig {
-            rtsan::realtime_enter();
+        // Generate the transformed function
+        let output = quote! {
+            #(#attrs)*
+            #vis #sig {
+                rtsan::realtime_enter();
 
-            // Wrap the block to potentially handle the return value
-            let result = #block;
+                // Wrap the block to potentially handle the return value
+                let result = #block;
 
-            rtsan::realtime_exit();
+                rtsan::realtime_exit();
 
-            result
-        }
-    };
+                result
+            }
+        };
 
-    TokenStream::from(output)
+        TokenStream::from(output)
+    } else {
+        // If the feature is not enabled, return the original function unchanged
+        item
+    }
 }
 
 /// Allows the user to specify a function as not-real-time-safe.
@@ -58,27 +64,33 @@ pub fn nonblocking(_attr: TokenStream, item: TokenStream) -> TokenStream {
 /// ```
 #[proc_macro_attribute]
 pub fn blocking(_attr: TokenStream, item: TokenStream) -> TokenStream {
-    // Parse the input token stream as a function
-    let input = parse_macro_input!(item as ItemFn);
+    // Check for a feature flag at compile time
+    if cfg!(feature = "sanitize") {
+        // Parse the input token stream as a function
+        let input = parse_macro_input!(item as ItemFn);
 
-    // Extract components of the function
-    let attrs = input.attrs; // Attributes, including doc comments
-    let vis = input.vis; // Visibility modifier
-    let sig = input.sig; // Function signature (includes name, generics, and return type)
-    let block = input.block; // Function body
-    let function_name = sig.ident.to_string();
+        // Extract components of the function
+        let attrs = input.attrs; // Attributes, including doc comments
+        let vis = input.vis; // Visibility modifier
+        let sig = input.sig; // Function signature (includes name, generics, and return type)
+        let block = input.block; // Function body
+        let function_name = sig.ident.to_string();
 
-    // Generate the transformed function
-    let output = quote! {
-        #(#attrs)*
-        #vis #sig {
-            rtsan::notify_blocking_call(#function_name);
-            // Directly execute and return the block
-            #block
-        }
-    };
+        // Generate the transformed function
+        let output = quote! {
+            #(#attrs)*
+            #vis #sig {
+                rtsan::notify_blocking_call(#function_name);
+                // Directly execute and return the block
+                #block
+            }
+        };
 
-    TokenStream::from(output)
+        TokenStream::from(output)
+    } else {
+        // If the feature is not enabled, return the original function unchanged
+        item
+    }
 }
 
 /// Disable all RTSan error reporting in an otherwise real-time context.
@@ -93,29 +105,35 @@ pub fn blocking(_attr: TokenStream, item: TokenStream) -> TokenStream {
 /// ```
 #[proc_macro_attribute]
 pub fn no_sanitize(_attr: TokenStream, item: TokenStream) -> TokenStream {
-    // Parse the input token stream as a function
-    let input = parse_macro_input!(item as ItemFn);
+    // Check for a feature flag at compile time
+    if cfg!(feature = "sanitize") {
+        // Parse the input token stream as a function
+        let input = parse_macro_input!(item as ItemFn);
 
-    // Extract the function signature and body
-    let attrs = input.attrs; // Attributes, including doc comments
-    let vis = input.vis; // Visibility modifier
-    let sig = input.sig; // Function signature (includes name, generics, and return type)
-    let block = input.block; // Function body
+        // Extract the function signature and body
+        let attrs = input.attrs; // Attributes, including doc comments
+        let vis = input.vis; // Visibility modifier
+        let sig = input.sig; // Function signature (includes name, generics, and return type)
+        let block = input.block; // Function body
 
-    // Generate the transformed function
-    let output = quote! {
-        #(#attrs)*
-        #vis #sig {
-            rtsan::disable();
+        // Generate the transformed function
+        let output = quote! {
+            #(#attrs)*
+            #vis #sig {
+                rtsan::disable();
 
-            // Wrap the block to potentially handle the return value
-            let result = #block;
+                // Wrap the block to potentially handle the return value
+                let result = #block;
 
-            rtsan::enable();
+                rtsan::enable();
 
-            result
-        }
-    };
+                result
+            }
+        };
 
-    TokenStream::from(output)
+        TokenStream::from(output)
+    } else {
+        // If the feature is not enabled, return the original function unchanged
+        item
+    }
 }
