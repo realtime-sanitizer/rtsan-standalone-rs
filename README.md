@@ -94,7 +94,7 @@ conditionally build the sanitizer into your project:
 cargo run --package integration-example --features sanitize
 ```
 
-All examples should fail with the `sanitize` feature enabled and run correctly
+All examples should fail with the `sanitize` feature enabled and work fine
 without it.
 
 ## Contact
