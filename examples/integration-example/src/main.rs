@@ -41,5 +41,5 @@ fn main() {
     let mut audio = vec![1.0; 256];
     processor.process(&mut audio);
 
-    println!("Example finished successfully!");
+    println!("Example finished without sanitizing!");
 }

@@ -32,16 +32,16 @@ cargo run --package integration-example
 Expected output:
 
 ```sh
-Example finished successfully!
+Example finished without sanitizing!
 ```
 
 ### Running With RTSan Enabled
 
 To enable RTSan and detect real-time violations, run the example with the
-`rtsan` feature:
+`sanitize` feature:
 
 ```sh
-cargo run --package integration-example --features rtsan
+cargo run --package integration-example --features sanitize
 ```
 
 If a real-time violation is detected, RTSan will produce an error like the
