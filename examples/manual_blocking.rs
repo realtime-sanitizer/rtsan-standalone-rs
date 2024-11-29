@@ -14,4 +14,6 @@ fn main() {
     rtsan::ensure_initialized();
 
     realtime_function();
+
+    println!("Example finished without sanitizing!");
 }

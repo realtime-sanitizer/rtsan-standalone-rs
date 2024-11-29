@@ -28,4 +28,6 @@ fn main() {
 
     let state = Arc::new(Mutex::new(State { value: 0 })); // ok
     process(state.clone());
+
+    println!("Example finished without sanitizing!");
 }
