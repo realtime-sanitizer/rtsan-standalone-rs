@@ -11,4 +11,4 @@ repository.workspace = true
 [dependencies]
 
 [build-dependencies]
-tempfile = "3.14"
+tempfile = "3"
