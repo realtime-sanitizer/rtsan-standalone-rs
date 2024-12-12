@@ -97,12 +97,9 @@
 
 #![allow(clippy::needless_doctest_main)]
 
-pub use std::*;
-
 pub use rtsan_macros::*;
 
-#[cfg(feature = "sanitize")]
-pub mod sync;
+pub mod std;
 
 /// Enter real-time context.
 /// When in a real-time context, RTSan interceptors will error if realtime

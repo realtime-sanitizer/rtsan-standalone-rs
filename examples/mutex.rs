@@ -2,7 +2,7 @@
 // allowing RTSan to report errors on standard functions
 // that cannot otherwise be detected (e.g., `std::Mutex::lock`).
 // This can remain enabled in production.
-use rtsan as std;
+use rtsan::std;
 
 // this is now using rtsan::sync::{Arc, Mutex}
 use std::sync::{Arc, Mutex};

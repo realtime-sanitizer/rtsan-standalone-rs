@@ -44,7 +44,7 @@ functions. To switch to the RTSan types, add the following to the top of your
 file:
 
 ```rust
-use rtsan as std;
+use rtsan::std;
 
 use std::sync::Mutex;
 ```
