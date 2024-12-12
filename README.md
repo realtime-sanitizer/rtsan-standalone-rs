@@ -4,11 +4,11 @@ This is a wrapper for the standalone version of RealtimeSanitizer (RTSan) to
 detect real-time violations in Rust applications.
 
 ## Todo
+- Add Github Actions CI for build / test / clippy / fmt / min version on Linux and macOS
 - Clarify if re-exporting std library is necessary
   - macOS Mutex is using pthread syscall and is detected
   - Linux is using not detected Futex but has a syscall in one specific case, when the lock can not be aquired fast
 - Clarify if `sanitize` feature should have better name, or should be automatically enabled when building with debug profile.
-- `rtsan::disabled_scope` macro should be called `scoped_disabler`
 - See if returns of scoped disabler are real-time safe so allocated vectors can be used afterwards
 - Detect number of cores in rtsan-sys build script instead of using fixed -j8
 

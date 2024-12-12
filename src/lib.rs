@@ -160,7 +160,7 @@ pub fn realtime_exit() {
 
 /// Disable all RTSan error reporting in an otherwise real-time context.
 /// Must be paired with a call to [`enable`].
-/// Corresponds to a [`disabled_scope`] or [`no_sanitize`] macro.
+/// Corresponds to a [`scoped_disabler`] or [`no_sanitize`] macro.
 ///
 /// # Example
 ///
@@ -178,7 +178,7 @@ pub fn realtime_exit() {
 /// // Macro usage preferred
 /// #[rtsan::nonblocking]
 /// fn process_preferred() {
-///     rtsan::disabled_scope!({
+///     rtsan::scoped_disabler!({
 ///         let mut data = vec![0.0; 16]; // ok
 ///     });
 /// }
@@ -192,7 +192,7 @@ pub fn disable() {
 
 /// Re-enable all RTSan error reporting.
 /// Must follow a call to [`disable`].
-/// Corresponds to a [`disabled_scope`] or [`no_sanitize`] macro.
+/// Corresponds to a [`scoped_disabler`] or [`no_sanitize`] macro.
 ///
 /// # Example
 ///
@@ -210,7 +210,7 @@ pub fn disable() {
 /// // Macro usage preferred
 /// #[rtsan::nonblocking]
 /// fn process_preferred() {
-///     rtsan::disabled_scope!({
+///     rtsan::scoped_disabler!({
 ///         let mut data = vec![0.0; 16]; // ok
 ///     });
 /// }
@@ -281,13 +281,13 @@ pub fn notify_blocking_call(function_name: &'static str) {
 /// ```
 /// #[rtsan::nonblocking]
 /// fn process_preferred() {
-///     rtsan::disabled_scope!({
+///     rtsan::scoped_disabler!({
 ///         let mut data = vec![0.0; 16]; // ok
 ///     });
 /// }
 /// ```
 #[macro_export]
-macro_rules! disabled_scope {
+macro_rules! scoped_disabler {
     ($block:block) => {{
         rtsan::disable();
         let result = (|| $block)();

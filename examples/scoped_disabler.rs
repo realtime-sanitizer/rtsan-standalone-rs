@@ -3,9 +3,9 @@
 fn my_function() {
     let _ = vec![0.0; 256]; // oops!
 
-    // use the disabled_scope macro to temporily disable
+    // use the scoped_disabler macro to temporily disable
     // the sanitizer in a realtime context
-    rtsan::disabled_scope!({
+    rtsan::scoped_disabler!({
         let _ = vec![0.0; 256]; // ok
     });
 
