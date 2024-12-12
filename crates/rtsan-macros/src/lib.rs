@@ -74,7 +74,8 @@ pub fn blocking(_attr: TokenStream, item: TokenStream) -> TokenStream {
         let vis = input.vis; // Visibility modifier
         let sig = input.sig; // Function signature (includes name, generics, and return type)
         let block = input.block; // Function body
-        let function_name = sig.ident.to_string();
+        let mut function_name = sig.ident.to_string();
+        function_name.push_str("\0");
 
         // Generate the transformed function
         let output = quote! {
