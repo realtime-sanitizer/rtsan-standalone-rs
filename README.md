@@ -3,6 +3,15 @@
 This is a wrapper for the standalone version of RealtimeSanitizer (RTSan) to
 detect real-time violations in Rust applications.
 
+## Todo
+- Clarify if re-exporting std library is necessary
+  - macOS Mutex is using pthread syscall and is detected
+  - Linux is using not detected Futex but has a syscall in one specific case, when the lock can not be aquired fast
+- Clarify if `sanitize` feature should have better name, or should be automatically enabled when building with debug profile.
+- `rtsan::disabled_scope` macro should be called `scoped_disabler`
+- See if returns of scoped disabler are real-time safe so allocated vectors can be used afterwards
+- Detect number of cores in rtsan-sys build script instead of using fixed -j8
+
 ## Usage
 
 Mark a real-time function with the `#[rtsan::nonblocking]` macro:
@@ -96,6 +105,14 @@ cargo run --package integration-example --features sanitize
 
 All examples should fail with the `sanitize` feature enabled and work fine
 without it.
+
+## RTSan Options
+You can set different options in RTSan like this:
+
+```sh
+RTSAN_OPTIONS=halt_on_error=false cargo run --example mutex --features sanitize
+```
+For a full list of options see here: https://clang.llvm.org/docs/RealtimeSanitizer.html#run-time-flags.
 
 ## Contact
 
