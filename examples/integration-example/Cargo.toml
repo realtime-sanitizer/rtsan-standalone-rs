@@ -11,4 +11,4 @@ publish = false
 rtsan = { workspace = true }
 
 [features]
-sanitize = ["rtsan/sanitize"]
+realtime-sanitizer = ["rtsan/enable"]

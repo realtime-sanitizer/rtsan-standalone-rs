@@ -32,4 +32,4 @@ rtsan-macros = { workspace = true }
 rtsan-sys = { workspace = true, optional = true }
 
 [features]
-sanitize = ["rtsan-macros/sanitize", "rtsan-sys"]
+enable = ["rtsan-macros/enable", "rtsan-sys"]

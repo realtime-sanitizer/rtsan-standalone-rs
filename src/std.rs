@@ -1,6 +1,6 @@
 pub use std::*;
 
-#[cfg(feature = "sanitize")]
+#[cfg(feature = "enable")]
 pub mod sync {
     pub use std::sync::*;
 

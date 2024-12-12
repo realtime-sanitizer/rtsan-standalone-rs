@@ -8,7 +8,6 @@ detect real-time violations in Rust applications.
 - Clarify if re-exporting std library is necessary
   - macOS Mutex is using pthread syscall and is detected
   - Linux is using not detected Futex but has a syscall in one specific case, when the lock can not be aquired fast
-- Clarify if `sanitize` feature should have better name, or should be automatically enabled when building with debug profile.
 - See if returns of scoped disabler are real-time safe so allocated vectors can be used afterwards
 - Detect number of cores in rtsan-sys build script instead of using fixed -j8
 
@@ -66,13 +65,13 @@ To use RTSan, add it as a dependency in your `Cargo.toml` file and add the
 rtsan = { git = "https://github.com/realtime-sanitizer/rtsan-standalone-rs", branch = "dev" }
 
 [features]
-sanitize = ["rtsan/sanitize"]
+realtime-sanitizer = ["rtsan/enable"]
 ```
 
 To run your project with sanitizing enabled, execute:
 
 ```sh
-cargo run --features sanitize
+cargo run --features realtime-sanitizer
 ```
 
 The initial build of `rtsan-sys` may take a few minutes to compile the LLVM
@@ -93,14 +92,14 @@ Explore the various possibilities with RTSan through the provided examples. For
 instance, to run the [`vector`](examples/vector.rs) example, execute:
 
 ```sh
-cargo run --example vector --features sanitize
+cargo run --example vector --features enable
 ```
 
 The [integration example](examples/integration-example/) demonstrates how to
 conditionally build the sanitizer into your project:
 
 ```sh
-cargo run --package integration-example --features sanitize
+cargo run --package integration-example --features realtime-sanitizer
 ```
 
 All examples should fail with the `sanitize` feature enabled and work fine
@@ -110,7 +109,7 @@ without it.
 You can set different options in RTSan like this:
 
 ```sh
-RTSAN_OPTIONS=halt_on_error=false cargo run --example mutex --features sanitize
+RTSAN_OPTIONS=halt_on_error=false cargo run --example mutex --features enable
 ```
 For a full list of options see here: https://clang.llvm.org/docs/RealtimeSanitizer.html#run-time-flags.
 
