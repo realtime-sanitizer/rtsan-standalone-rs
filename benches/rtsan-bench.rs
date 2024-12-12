@@ -16,6 +16,8 @@ pub fn my_scoped_disabler() {
 }
 
 pub fn rtsan_bench(c: &mut Criterion) {
+    rtsan::ensure_initialized();
+
     c.bench_function("nonblocking", |b| {
         b.iter(|| {
             my_nonblocking();
