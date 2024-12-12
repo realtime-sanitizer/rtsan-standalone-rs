@@ -31,5 +31,12 @@ readme.workspace = true
 rtsan-macros = { workspace = true }
 rtsan-sys = { workspace = true, optional = true }
 
+[dev-dependencies]
+criterion = "0.5.1"
+
 [features]
 enable = ["rtsan-macros/enable", "rtsan-sys"]
+
+[[bench]]
+name = "rtsan-bench"
+harness = false
