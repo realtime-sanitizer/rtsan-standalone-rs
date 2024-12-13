@@ -7,6 +7,7 @@
   - Linux is using not detected Futex but has a syscall in one specific case, when the lock can not be aquired fast
 - See if returns of scoped disabler are real-time safe so allocated vectors can be used afterwards
 - Detect number of cores in rtsan-sys build script instead of using fixed -j8
+- Automatically skip build on non supported architectures and print warning (behave like without enable feature)
 
 ## Benchmarking
 
