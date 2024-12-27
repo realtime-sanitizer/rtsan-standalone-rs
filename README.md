@@ -24,25 +24,9 @@ Intercepted call to real-time unsafe function `calloc` in real-time context!
     #2 0x55c0c3be4e69 in alloc::alloc::Global::alloc_impl::hc0e9b7c86f5cad5c /rustc/f6e511eec7342f59a25f7c0534f1dbea00d01b14/library/alloc/src/alloc.rs:181:43
     #3 0x55c0c3be56fb in _$LT$alloc..alloc..Global$u20$as$u20$core..alloc..Allocator$GT$::allocate_zeroed::h8f75ff921b519af6 /rustc/f6e511eec7342f59a25f7c0534f1dbea00d01b14/library/alloc/src/alloc.rs:246:9
     ...
-    #27 0x55c0c3be2ab4 in _start (target/debug/examples/vector+0x2ab4) (BuildId: adb992a7e560cd00ef533c9333d3c033fb4a7c42)    
+    #27 0x55c0c3be2ab4 in _start (target/debug/examples/vector+0x2ab4) (BuildId: adb992a7e560cd00ef533c9333d3c033fb4a7c42)
 SUMMARY: RealtimeSanitizer: unsafe-library-call /rustc/f6e511eec7342f59a25f7c0534f1dbea00d01b14/library/alloc/src/alloc.rs:170:14 in alloc::alloc::alloc_zeroed::hf760e6484fdf32c8
 ```
-
-Currently, not all blocking functions in the standard library can be detected
-(e.g., `Mutex::lock`). As a workaround, this library re-exports the standard
-library and wraps some of its types to enable detection for more blocking
-functions. To switch to the RTSan types, add the following to the top of your
-file:
-
-```rust
-use rtsan::std;
-
-use std::sync::Mutex;
-```
-
-Now you can use `std::sync::Mutex` and all other std types from rtsan. Just
-beware, that when using `::std::sync::Mutex` the orginal Mutex will be used,
-without sanitizing.
 
 ## Setup
 
@@ -57,13 +41,13 @@ To use RTSan, add it as a dependency in your `Cargo.toml` file and add the
 rtsan = { git = "https://github.com/realtime-sanitizer/rtsan-standalone-rs", branch = "dev" }
 
 [features]
-realtime-sanitizer = ["rtsan/enable"]
+rtsan = ["rtsan/enable"]
 ```
 
 To run your project with sanitizing enabled, execute:
 
 ```sh
-cargo run --features realtime-sanitizer
+cargo run --features rtsan
 ```
 
 The initial build of `rtsan-sys` may take a few minutes to compile the LLVM
@@ -91,10 +75,10 @@ The [integration example](examples/integration-example/) demonstrates how to
 conditionally build the sanitizer into your project:
 
 ```sh
-cargo run --package integration-example --features realtime-sanitizer
+cargo run --package integration-example --features rtsan
 ```
 
-All examples should fail with the `sanitize` feature enabled and work fine
+All examples should fail with the `enable` feature enabled and work fine
 without it.
 
 ## RTSan Options

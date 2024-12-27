@@ -1,15 +1,4 @@
-// Use the re-exported standard library from RTSan,
-// allowing RTSan to report errors on standard functions
-// that cannot otherwise be detected (e.g., `std::Mutex::lock`).
-// This can remain enabled in production.
-use rtsan::std;
-
-// this is now using rtsan::sync::{Arc, Mutex}
 use std::sync::{Arc, Mutex};
-
-// don't use this!
-// ::std::sync::Mutex
-// -- this is using the normal std library
 
 pub struct State {
     value: usize,

@@ -1,9 +1,3 @@
-// Use the re-exported standard library from RTSan,
-// allowing RTSan to report errors on standard functions
-// that cannot otherwise be detected (e.g., `std::Mutex::lock`).
-// This can remain enabled in production.
-use rtsan::std;
-
 use std::sync::{Arc, Mutex};
 
 pub struct MyProcessor {
