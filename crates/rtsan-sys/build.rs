@@ -1,25 +1,46 @@
 use std::env;
 use std::fs;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use std::process::Command;
 use tempfile::tempdir;
 
 fn main() {
-    // Check for required tools
+    let target_os = env::var("CARGO_CFG_TARGET_OS").unwrap();
+    let target_arch = env::var("CARGO_CFG_TARGET_ARCH").unwrap();
+    let out_dir = PathBuf::from(env::var("OUT_DIR").unwrap());
+
+    // Check if pre-built library path is provided
+    if let Ok(prebuilt_lib) = env::var("RTSAN_LIB_PATH") {
+        let prebuilt_path = PathBuf::from(prebuilt_lib);
+        if !prebuilt_path.exists() {
+            panic!("Provided library path does not exist: {:?}", prebuilt_path);
+        }
+
+        let expected_extension = if target_os == "linux" { "a" } else { "dylib" };
+        if !prebuilt_path
+            .extension()
+            .map_or(false, |ext| ext == expected_extension)
+        {
+            panic!("Invalid library extension for target OS");
+        }
+
+        // Copy the library to OUT_DIR
+        let lib_name = prebuilt_path.file_name().unwrap();
+        let dest_lib_path = out_dir.join(lib_name);
+        fs::copy(&prebuilt_path, &dest_lib_path).expect("Failed to copy library to OUT_DIR");
+
+        setup_linking(&dest_lib_path, &target_os);
+        return;
+    }
+
+    // If no pre-built library provided, build from source
     check_tool("git");
     check_tool("cmake");
     check_tool("make");
 
-    // Get target OS and architecture
-    let target_os = env::var("CARGO_CFG_TARGET_OS").unwrap();
-    let target_arch = env::var("CARGO_CFG_TARGET_ARCH").unwrap();
-
     if target_os == "macos" {
         check_tool("install_name_tool");
     }
-
-    // Set up paths
-    let out_dir = PathBuf::from(env::var("OUT_DIR").unwrap());
 
     // Create a unique temporary directory
     let temp_dir = tempdir().expect("Failed to create temporary directory");
@@ -70,9 +91,13 @@ fn main() {
         ],
         build_dir.to_str().unwrap(),
     );
-    run_command("make", &["-j8", "rtsan"], build_dir.to_str().unwrap());
+    let num_cores = num_cpus::get();
+    run_command(
+        "make",
+        &[&format!("-j{}", num_cores), "rtsan"],
+        build_dir.to_str().unwrap(),
+    );
 
-    // Locate the built library
     let lib_path = if target_os == "linux" {
         build_dir.join(format!("lib/linux/libclang_rt.rtsan-{}.a", target_arch))
     } else {
@@ -83,14 +108,18 @@ fn main() {
         panic!("Built library not found at {:?}", lib_path);
     }
 
-    // Copy the library to OUT_DIR
     let lib_name = lib_path.file_name().unwrap();
     let dest_lib_path = out_dir.join(lib_name);
     fs::copy(&lib_path, &dest_lib_path).expect("Failed to copy library to OUT_DIR");
 
-    // Link the library
+    setup_linking(&dest_lib_path, &target_os);
+}
+
+fn setup_linking(lib_path: &Path, target_os: &str) {
+    let out_dir = lib_path.parent().unwrap();
     println!("cargo:rustc-link-search=native={}", out_dir.display());
 
+    let lib_name = lib_path.file_name().unwrap();
     if target_os == "linux" {
         let lib_stem = lib_name
             .to_str()
@@ -105,7 +134,7 @@ fn main() {
             &[
                 "-id",
                 "@rpath/libclang_rt.rtsan_osx_dynamic.dylib",
-                dest_lib_path.to_str().unwrap(),
+                lib_path.to_str().unwrap(),
             ],
             ".",
         );

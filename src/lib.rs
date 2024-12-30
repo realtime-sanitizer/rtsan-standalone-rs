@@ -98,7 +98,7 @@
 //! - **GitHub Issues**: Submit your queries or suggestions directly to this
 //!   repository.
 //!
-#![no_std]
+#![cfg_attr(not(test), no_std)]
 #![allow(clippy::needless_doctest_main)]
 
 pub use rtsan_macros::*;
@@ -303,7 +303,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn it_works() {
+    fn test_non_blocking() {
         notify_blocking_call("my_blocking_function\0");
 
         ensure_initialized();

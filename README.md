@@ -56,6 +56,41 @@ libraries.
 For more help, refer to the integration example
 [README](examples/integration-example/README.md).
 
+## Pre-built Library
+
+To optimize compile times and avoid rebuilding rtsan for each project, you can use a pre-built library. This section explains how to set up and use the pre-built library.
+
+### Library Location
+After building the crate for the first time, the library is typically located at:
+```
+target/debug/build/rtsan-sys-*/out/
+```
+
+### Setting Up RTSAN_LIBRARY_PATH
+To use the pre-built library, you need to set the `RTSAN_LIBRARY_PATH` environment variable. Here are three ways to do this:
+
+1. **Direct Shell Command**
+   ```sh
+   # Linux
+   RTSAN_LIBRARY_PATH=/path/to/libclang_rt.rtsan-x86_64.a cargo run --features enable
+
+   # macOS
+   RTSAN_LIBRARY_PATH=/path/to/libclang_rt.rtsan_osx_dynamic.dylib cargo run --features enable
+   ```
+
+2. **Cargo Configuration**
+   Add the following to your `.cargo/config.toml`:
+   ```toml
+   [env]
+   RTSAN_LIBRARY_PATH = "/path/to/libclang_rt.rtsan-x86_64.a"
+   ```
+
+3. **Shell Configuration**
+   Add this line to your shell's configuration file (`.zshrc`, `.bashrc`, etc.):
+   ```sh
+   export RTSAN_LIBRARY_PATH="/path/to/libclang_rt.rtsan-x86_64.a"
+   ```
+
 ## Features
 
 The `sanitize` feature allows you to enable or disable sanitizing for your
