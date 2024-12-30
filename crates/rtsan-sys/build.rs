@@ -5,6 +5,12 @@ use std::process::Command;
 use tempfile::tempdir;
 
 fn main() {
+    #[cfg(not(any(target_os = "macos", target_os = "linux")))]
+    {
+        println!("cargo:warning=rtsan is currently only supported on macOS and Linux.");
+        return;
+    }
+
     let target_os = env::var("CARGO_CFG_TARGET_OS").unwrap();
     let target_arch = env::var("CARGO_CFG_TARGET_ARCH").unwrap();
     let out_dir = PathBuf::from(env::var("OUT_DIR").unwrap());

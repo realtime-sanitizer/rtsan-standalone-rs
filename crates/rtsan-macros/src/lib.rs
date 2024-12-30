@@ -22,7 +22,10 @@ use syn::{parse_macro_input, ItemFn};
 #[proc_macro_attribute]
 pub fn nonblocking(_attr: TokenStream, item: TokenStream) -> TokenStream {
     // Check for a feature flag at compile time
-    if cfg!(feature = "enable") {
+    if cfg!(all(
+        any(target_os = "macos", target_os = "linux"),
+        feature = "enable"
+    )) {
         // Parse the input token stream as a function
         let input = parse_macro_input!(item as ItemFn);
 
@@ -65,7 +68,10 @@ pub fn nonblocking(_attr: TokenStream, item: TokenStream) -> TokenStream {
 #[proc_macro_attribute]
 pub fn blocking(_attr: TokenStream, item: TokenStream) -> TokenStream {
     // Check for a feature flag at compile time
-    if cfg!(feature = "enable") {
+    if cfg!(all(
+        any(target_os = "macos", target_os = "linux"),
+        feature = "enable"
+    )) {
         // Parse the input token stream as a function
         let input = parse_macro_input!(item as ItemFn);
 
@@ -107,7 +113,10 @@ pub fn blocking(_attr: TokenStream, item: TokenStream) -> TokenStream {
 #[proc_macro_attribute]
 pub fn no_sanitize(_attr: TokenStream, item: TokenStream) -> TokenStream {
     // Check for a feature flag at compile time
-    if cfg!(feature = "enable") {
+    if cfg!(all(
+        any(target_os = "macos", target_os = "linux"),
+        feature = "enable"
+    )) {
         // Parse the input token stream as a function
         let input = parse_macro_input!(item as ItemFn);
 
