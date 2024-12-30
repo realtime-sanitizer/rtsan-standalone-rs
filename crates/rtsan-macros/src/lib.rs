@@ -121,17 +121,18 @@ pub fn no_sanitize(_attr: TokenStream, item: TokenStream) -> TokenStream {
         let output = quote! {
             #(#attrs)*
             #vis #sig {
-                rtsan::disable();
+                {
+                    rtsan::disable();
 
-                // Wrap the block to potentially handle the return value
-                let result = #block;
+                    // Wrap the block to potentially handle the return value
+                    let __result = #block;
 
-                rtsan::enable();
+                    rtsan::enable();
 
-                result
+                    __result
+                }
             }
         };
-
         TokenStream::from(output)
     } else {
         // If the feature is not enabled, return the original function unchanged
