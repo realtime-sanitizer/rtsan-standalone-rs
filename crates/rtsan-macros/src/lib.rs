@@ -21,38 +21,29 @@ use syn::{parse_macro_input, ItemFn};
 /// ```
 #[proc_macro_attribute]
 pub fn nonblocking(_attr: TokenStream, item: TokenStream) -> TokenStream {
-    // Check for a feature flag at compile time
     if cfg!(all(
         any(target_os = "macos", target_os = "linux"),
         feature = "enable"
     )) {
-        // Parse the input token stream as a function
         let input = parse_macro_input!(item as ItemFn);
+        let attrs = input.attrs;
+        let vis = input.vis;
+        let sig = input.sig;
+        let block = input.block;
 
-        // Extract the function signature and body
-        let attrs = input.attrs; // Attributes, including doc comments
-        let vis = input.vis; // Visibility modifier
-        let sig = input.sig; // Function signature (includes name, generics, and return type)
-        let block = input.block; // Function body
-
-        // Generate the transformed function
         let output = quote! {
             #(#attrs)*
             #vis #sig {
-                rtsan::realtime_enter();
-
-                // Wrap the block to potentially handle the return value
-                let result = #block;
-
-                rtsan::realtime_exit();
-
-                result
+                {
+                    rtsan::realtime_enter();
+                    let __result = #block;
+                    rtsan::realtime_exit();
+                    __result
+                }
             }
         };
-
         TokenStream::from(output)
     } else {
-        // If the feature is not enabled, return the original function unchanged
         item
     }
 }

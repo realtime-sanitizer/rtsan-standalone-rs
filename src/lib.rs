@@ -292,9 +292,9 @@ pub fn notify_blocking_call(function_name: &'static str) {
 macro_rules! scoped_disabler {
     ($block:block) => {{
         rtsan::disable();
-        let result = (|| $block)();
+        let __result = (|| $block)();
         rtsan::enable();
-        result
+        __result
     }};
 }
 
