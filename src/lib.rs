@@ -35,8 +35,8 @@
 //! RTSan currently supports Linux and macOS. Ensure you have the following tools
 //! installed: `git`, `make`, and `cmake` (version 3.20.0 or higher).
 //!
-//! To use RTSan, add it as a dependency in your `Cargo.toml` file and add the
-//! `enable` feature conditionally:
+//! To use RTSan, add it as a dependency in your `Cargo.toml` file and conditionally add the
+//! `enable` feature:
 //!
 //! ```toml
 //! [dependencies]
