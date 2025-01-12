@@ -29,8 +29,6 @@ readme.workspace = true
 
 [dependencies]
 rtsan-standalone-macros = { workspace = true }
-
-[target.'cfg(any(target_os = "macos", target_os = "linux"))'.dependencies]
 rtsan-standalone-sys = { workspace = true, optional = true }
 
 [dev-dependencies]

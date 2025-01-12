@@ -36,7 +36,7 @@
 //! installed: `git`, `make`, and `cmake` (version 3.20.0 or higher).
 //!
 //! To use RTSan, add it as a dependency in your `Cargo.toml` file and add the
-//! `sanitize` feature to your project:
+//! `enable` feature conditionally:
 //!
 //! ```toml
 //! [dependencies]

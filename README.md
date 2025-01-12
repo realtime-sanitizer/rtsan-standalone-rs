@@ -1,7 +1,7 @@
 # rtsan-standalone-rs
 
 This is a wrapper for the standalone version of RealtimeSanitizer (RTSan) to
-detect real-time violations in Rust applications.
+detect real-time violations in Rust applications. Currently this sanitizer only works on Linux and macOS.
 
 ## Usage
 
@@ -36,7 +36,7 @@ RTSan currently supports Linux and macOS. Ensure you have the following tools
 installed: `git`, `make`, and `cmake` (version 3.20.0 or higher).
 
 To use RTSan, add it as a dependency in your `Cargo.toml` file and add the
-`sanitize` feature to your project:
+`enable` feature conditionally:
 
 ```toml
 [dependencies]
@@ -63,15 +63,19 @@ For more help, refer to the integration example
 To optimize compile times and avoid rebuilding rtsan for each project, you can use a pre-built library. This section explains how to set up and use the pre-built library.
 
 ### Library Location
+
 After building the crate for the first time, the library is typically located at:
+
 ```sh
 target/debug/build/rtsan-standlone-sys-*/out/
 ```
 
 ### Setting Up RTSAN_LIBRARY_PATH
+
 To use the pre-built library, you need to set the `RTSAN_LIBRARY_PATH` environment variable. Here are three ways to do this:
 
 1. **Direct Shell Command**
+
    ```sh
    # Linux
    RTSAN_LIBRARY_PATH=/path/to/libclang_rt.rtsan-x86_64.a cargo run --features enable
@@ -82,6 +86,7 @@ To use the pre-built library, you need to set the `RTSAN_LIBRARY_PATH` environme
 
 2. **Cargo Configuration**
    Add the following to your `.cargo/config.toml`:
+
    ```toml
    [env]
    RTSAN_LIBRARY_PATH = "/path/to/libclang_rt.rtsan-x86_64.a"
@@ -116,11 +121,13 @@ cargo run --package integration-example --features rtsan
 ```
 
 ## RTSan Options
+
 You can set different options in RTSan like this:
 
 ```sh
 RTSAN_OPTIONS=halt_on_error=false cargo run --example mutex --features enable
 ```
+
 For a full list of options see here: https://clang.llvm.org/docs/RealtimeSanitizer.html#run-time-flags.
 
 ## Contact
