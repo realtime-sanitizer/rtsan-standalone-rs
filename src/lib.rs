@@ -1,12 +1,16 @@
+//! # rtsan-standalone
+//!
 //! This is a wrapper for the standalone version of RealtimeSanitizer (RTSan) to
 //! detect real-time violations in Rust applications.
 //!
 //! ## Usage
 //!
-//! Mark a real-time function with the `#[rtsan::nonblocking]` macro:
+//! Mark a real-time function with the `#[nonblocking]` macro:
 //!
 //! ```rust
-//! #[rtsan::nonblocking]
+//! use rtsan_standalone::nonblocking;
+//!
+//! #[nonblocking]
 //! fn process(data: &mut [f32]) {
 //!     let _ = vec![0.0; 16]; // oops!
 //! }
@@ -36,10 +40,10 @@
 //!
 //! ```toml
 //! [dependencies]
-//! rtsan = { git = "https://github.com/realtime-sanitizer/rtsan-standalone-rs", branch = "dev" }
+//! rtsan-standalone = "0.1.0"
 //!
 //! [features]
-//! rtsan = ["rtsan/enable"]
+//! rtsan = ["rtsan-standalone/enable"]
 //! ```
 //!
 //! To run your project with sanitizing enabled, execute:
@@ -48,15 +52,50 @@
 //! cargo run --features rtsan
 //! ```
 //!
-//! The initial build of `rtsan-sys` may take a few minutes to compile the LLVM
+//! The initial build of `rtsan-standalone-sys` may take a few minutes to compile the LLVM
 //! libraries.
 //!
 //! For more help, refer to the integration example
 //! [README](examples/integration-example/README.md).
 //!
+//! ## Pre-built Library
+//!
+//! To optimize compile times and avoid rebuilding rtsan for each project, you can use a pre-built library. This section explains how to set up and use the pre-built library.
+//!
+//! ### Library Location
+//! After building the crate for the first time, the library is typically located at:
+//! ```sh
+//! target/debug/build/rtsan-standalone-sys-*/out/
+//! ```
+//!
+//! ### Setting Up RTSAN_LIBRARY_PATH
+//! To use the pre-built library, you need to set the `RTSAN_LIBRARY_PATH` environment variable. Here are three ways to do this:
+//!
+//! 1. **Direct Shell Command**
+//!    ```sh
+//!    # Linux
+//!    RTSAN_LIBRARY_PATH=/path/to/libclang_rt.rtsan-x86_64.a cargo run --features enable
+//!
+//!    # macOS
+//!    RTSAN_LIBRARY_PATH=/path/to/libclang_rt.rtsan_osx_dynamic.dylib cargo run --features enable
+//!    ```
+//!
+//! 2. **Cargo Configuration**
+//!    Add the following to your `.cargo/config.toml`:
+//!    ```toml
+//!    [env]
+//!    RTSAN_LIBRARY_PATH = "/path/to/libclang_rt.rtsan-x86_64.a"
+//!    ```
+//!
+//! 3. **Shell Configuration**
+//!    Add this line to your shell's configuration file (`.zshrc`, `.bashrc`, etc.):
+//!    ```sh
+//!    export RTSAN_LIBRARY_PATH="/path/to/libclang_rt.rtsan-x86_64.a"
+//!    ```
+//!
 //! ## Features
 //!
-//! The `sanitize` feature allows you to enable or disable sanitizing for your
+//! The `enable` feature allows you to enable or disable sanitizing for your
 //! project. This ensures that all RTSan functions and macros can remain in your
 //! production code without impacting performance when the feature is disabled.
 //!
@@ -69,15 +108,12 @@
 //! cargo run --example vector --features enable
 //! ```
 //!
-//! The [integration example](examples/integration-example/) demonstrates how to
+//! The [integration example](./examples/integration-example/) demonstrates how to
 //! conditionally build the sanitizer into your project:
 //!
 //! ```sh
 //! cargo run --package integration-example --features rtsan
 //! ```
-//!
-//! All examples should fail with the `enable` feature enabled and work fine
-//! without it.
 //!
 //! ## RTSan Options
 //! You can set different options in RTSan like this:
@@ -101,7 +137,7 @@
 #![cfg_attr(not(test), no_std)]
 #![allow(clippy::needless_doctest_main)]
 
-pub use rtsan_macros::*;
+pub use rtsan_standalone_macros::*;
 
 /// Enter real-time context.
 /// When in a real-time context, RTSan interceptors will error if realtime
@@ -112,14 +148,16 @@ pub use rtsan_macros::*;
 /// # Example
 ///
 /// ```
+/// use rtsan_standalone::*;
+///
 /// fn process() {
-///     rtsan::realtime_enter();
+///     realtime_enter();
 ///     let _ = vec![0.0; 256]; // oops!
-///     rtsan::realtime_exit();
+///     realtime_exit();
 /// }
 ///
 /// // Macro usage preferred
-/// #[rtsan::nonblocking]
+/// #[nonblocking]
 /// fn process_preferred() {
 ///     let _ = vec![0.0; 256]; // oops!
 /// }
@@ -128,7 +166,7 @@ pub use rtsan_macros::*;
 pub fn realtime_enter() {
     #[cfg(all(any(target_os = "macos", target_os = "linux"), feature = "enable"))]
     unsafe {
-        rtsan_sys::__rtsan_realtime_enter();
+        rtsan_standalone_sys::__rtsan_realtime_enter();
     }
 }
 
@@ -140,14 +178,16 @@ pub fn realtime_enter() {
 /// # Example
 ///
 /// ```
+/// use rtsan_standalone::*;
+///
 /// fn process() {
-///     rtsan::realtime_enter();
+///     realtime_enter();
 ///     let _ = vec![0.0; 256]; // oops!
-///     rtsan::realtime_exit();
+///     realtime_exit();
 /// }
 ///
 /// // Macro usage preferred
-/// #[rtsan::nonblocking]
+/// #[nonblocking]
 /// fn process_preferred() {
 ///     let _ = vec![0.0; 256]; // oops!
 /// }
@@ -156,31 +196,33 @@ pub fn realtime_enter() {
 pub fn realtime_exit() {
     #[cfg(all(any(target_os = "macos", target_os = "linux"), feature = "enable"))]
     unsafe {
-        rtsan_sys::__rtsan_realtime_exit();
+        rtsan_standalone_sys::__rtsan_realtime_exit();
     }
 }
 
 /// Disable all RTSan error reporting in an otherwise real-time context.
 /// Must be paired with a call to [`enable`].
-/// Corresponds to a [`scoped_disabler`] or [`no_sanitize`] macro.
+/// Corresponds to a [`scoped_disabler`] or [`no_sanitize_realtime`] macro.
 ///
 /// # Example
 ///
 /// ```
+/// use rtsan_standalone::*;
+///
 /// fn process() {
-///     rtsan::realtime_enter();
+///     realtime_enter();
 ///
-///     rtsan::disable();
+///     disable();
 ///     let mut data = vec![0.0; 16]; // ok
-///     rtsan::enable();
+///     enable();
 ///
-///     rtsan::realtime_exit();
+///     realtime_exit();
 /// }
 ///
 /// // Macro usage preferred
-/// #[rtsan::nonblocking]
+/// #[nonblocking]
 /// fn process_preferred() {
-///     rtsan::scoped_disabler!({
+///     scoped_disabler!({
 ///         let mut data = vec![0.0; 16]; // ok
 ///     });
 /// }
@@ -188,31 +230,33 @@ pub fn realtime_exit() {
 pub fn disable() {
     #[cfg(all(any(target_os = "macos", target_os = "linux"), feature = "enable"))]
     unsafe {
-        rtsan_sys::__rtsan_disable();
+        rtsan_standalone_sys::__rtsan_disable();
     }
 }
 
 /// Re-enable all RTSan error reporting.
 /// Must follow a call to [`disable`].
-/// Corresponds to a [`scoped_disabler`] or [`no_sanitize`] macro.
+/// Corresponds to a [`scoped_disabler`] or [`no_sanitize_realtime`] macro.
 ///
 /// # Example
 ///
 /// ```
+/// use rtsan_standalone::*;
+///
 /// fn process() {
-///     rtsan::realtime_enter();
+///     realtime_enter();
 ///
-///     rtsan::disable();
+///     disable();
 ///     let mut data = vec![0.0; 16]; // ok
-///     rtsan::enable();
+///     enable();
 ///
-///     rtsan::realtime_exit();
+///     realtime_exit();
 /// }
 ///
 /// // Macro usage preferred
-/// #[rtsan::nonblocking]
+/// #[nonblocking]
 /// fn process_preferred() {
-///     rtsan::scoped_disabler!({
+///     scoped_disabler!({
 ///         let mut data = vec![0.0; 16]; // ok
 ///     });
 /// }
@@ -220,7 +264,7 @@ pub fn disable() {
 pub fn enable() {
     #[cfg(all(any(target_os = "macos", target_os = "linux"), feature = "enable"))]
     unsafe {
-        rtsan_sys::__rtsan_enable();
+        rtsan_standalone_sys::__rtsan_enable();
     }
 }
 
@@ -231,14 +275,16 @@ pub fn enable() {
 /// # Example
 ///
 /// ```
+/// use rtsan_standalone::*;
+///
 /// fn main() {
-///     rtsan::ensure_initialized();
+///     ensure_initialized();
 /// }
 /// ```
 pub fn ensure_initialized() {
     #[cfg(all(any(target_os = "macos", target_os = "linux"), feature = "enable"))]
     unsafe {
-        rtsan_sys::__rtsan_ensure_initialized();
+        rtsan_standalone_sys::__rtsan_ensure_initialized();
     }
 }
 
@@ -253,12 +299,14 @@ pub fn ensure_initialized() {
 /// # Example
 ///
 /// ```
+/// use rtsan_standalone::*;
+///
 /// fn my_blocking_function() {
-///     rtsan::notify_blocking_call("my_blocking_function\0");
+///     notify_blocking_call("my_blocking_function\0");
 /// }
 ///
 /// // Preferred macro usage
-/// #[rtsan::blocking]
+/// #[blocking]
 /// fn my_blocking_function_preferred() {}
 /// ```
 #[allow(unused_variables)]
@@ -266,10 +314,10 @@ pub fn notify_blocking_call(function_name: &'static str) {
     #[cfg(all(any(target_os = "macos", target_os = "linux"), feature = "enable"))]
     {
         if !function_name.ends_with('\0') {
-            panic!("`rtsan::notify_blocking_call` requires a null-terminated function name (e.g., \"my_function_name\\0\").");
+            panic!("`notify_blocking_call` requires a null-terminated function name (e.g., \"my_function_name\\0\").");
         }
         unsafe {
-            rtsan_sys::__rtsan_notify_blocking_call(
+            rtsan_standalone_sys::__rtsan_notify_blocking_call(
                 function_name.as_ptr() as *const core::ffi::c_char
             );
         }
@@ -281,9 +329,11 @@ pub fn notify_blocking_call(function_name: &'static str) {
 /// # Example
 ///
 /// ```
-/// #[rtsan::nonblocking]
+/// use rtsan_standalone::*;
+///
+/// #[nonblocking]
 /// fn process_preferred() {
-///     rtsan::scoped_disabler!({
+///     scoped_disabler!({
 ///         let mut data = vec![0.0; 16]; // ok
 ///     });
 /// }
@@ -291,9 +341,9 @@ pub fn notify_blocking_call(function_name: &'static str) {
 #[macro_export]
 macro_rules! scoped_disabler {
     ($block:block) => {{
-        rtsan::disable();
+        rtsan_standalone::disable();
         let __result = (|| $block)();
-        rtsan::enable();
+        rtsan_standalone::enable();
         __result
     }};
 }

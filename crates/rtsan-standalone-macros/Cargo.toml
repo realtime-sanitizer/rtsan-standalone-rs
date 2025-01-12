@@ -1,5 +1,5 @@
 [package]
-name = "rtsan-macros"
+name = "rtsan-standalone-macros"
 description = "Macro crate for RTSan standalone"
 version.workspace = true
 edition.workspace = true

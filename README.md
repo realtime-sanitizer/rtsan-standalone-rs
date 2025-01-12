@@ -5,10 +5,12 @@ detect real-time violations in Rust applications.
 
 ## Usage
 
-Mark a real-time function with the `#[rtsan::nonblocking]` macro:
+Mark a real-time function with the `#[nonblocking]` macro:
 
 ```rust
-#[rtsan::nonblocking]
+use rtsan_standalone::nonblocking;
+
+#[nonblocking]
 fn process(data: &mut [f32]) {
     let _ = vec![0.0; 16]; // oops!
 }
@@ -38,10 +40,10 @@ To use RTSan, add it as a dependency in your `Cargo.toml` file and add the
 
 ```toml
 [dependencies]
-rtsan = { git = "https://github.com/realtime-sanitizer/rtsan-standalone-rs", branch = "dev" }
+rtsan-standalone = "0.1.0"
 
 [features]
-rtsan = ["rtsan/enable"]
+rtsan = ["rtsan-standalone/enable"]
 ```
 
 To run your project with sanitizing enabled, execute:
@@ -50,7 +52,7 @@ To run your project with sanitizing enabled, execute:
 cargo run --features rtsan
 ```
 
-The initial build of `rtsan-sys` may take a few minutes to compile the LLVM
+The initial build of `rtsan-standalone-sys` may take a few minutes to compile the LLVM
 libraries.
 
 For more help, refer to the integration example
@@ -62,8 +64,8 @@ To optimize compile times and avoid rebuilding rtsan for each project, you can u
 
 ### Library Location
 After building the crate for the first time, the library is typically located at:
-```
-target/debug/build/rtsan-sys-*/out/
+```sh
+target/debug/build/rtsan-standlone-sys-*/out/
 ```
 
 ### Setting Up RTSAN_LIBRARY_PATH
@@ -93,7 +95,7 @@ To use the pre-built library, you need to set the `RTSAN_LIBRARY_PATH` environme
 
 ## Features
 
-The `sanitize` feature allows you to enable or disable sanitizing for your
+The `enable` feature allows you to enable or disable sanitizing for your
 project. This ensures that all RTSan functions and macros can remain in your
 production code without impacting performance when the feature is disabled.
 
@@ -106,15 +108,12 @@ instance, to run the [`vector`](examples/vector.rs) example, execute:
 cargo run --example vector --features enable
 ```
 
-The [integration example](examples/integration-example/) demonstrates how to
+The [integration example](./examples/integration-example/) demonstrates how to
 conditionally build the sanitizer into your project:
 
 ```sh
 cargo run --package integration-example --features rtsan
 ```
-
-All examples should fail with the `enable` feature enabled and work fine
-without it.
 
 ## RTSan Options
 You can set different options in RTSan like this:

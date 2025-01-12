@@ -220,7 +220,7 @@ checksum = "fbf6a919d6cf397374f7dfeeea91d974c7c0a7221d0d0f4f20d859d329e53fcc"
 name = "integration-example"
 version = "0.1.0"
 dependencies = [
- "rtsan",
+ "rtsan-standalone",
 ]
 
 [[package]]
@@ -410,16 +410,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2b15c43186be67a4fd63bee50d0303afffcef381492ebe2c5d87f324e1b8815c"
 
 [[package]]
-name = "rtsan"
+name = "rtsan-standalone"
 version = "0.1.0"
 dependencies = [
  "criterion",
- "rtsan-macros",
- "rtsan-sys",
+ "rtsan-standalone-macros",
+ "rtsan-standalone-sys",
 ]
 
 [[package]]
-name = "rtsan-macros"
+name = "rtsan-standalone-macros"
 version = "0.1.0"
 dependencies = [
  "quote",
@@ -427,7 +427,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "rtsan-sys"
+name = "rtsan-standalone-sys"
 version = "0.1.0"
 dependencies = [
  "num_cpus",

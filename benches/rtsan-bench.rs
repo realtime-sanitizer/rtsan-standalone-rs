@@ -1,22 +1,22 @@
 use criterion::{criterion_group, criterion_main, Criterion};
-use rtsan::scoped_disabler;
+use rtsan_standalone::*;
 
-#[rtsan::nonblocking]
+#[nonblocking]
 pub fn my_nonblocking() {}
 
-#[rtsan::blocking]
+#[blocking]
 pub fn my_blocking() {}
 
-#[rtsan::no_sanitize]
-pub fn my_nosanitize() {}
+#[no_sanitize_realtime]
+pub fn my_no_sanitize() {}
 
-#[rtsan::nonblocking]
+#[nonblocking]
 pub fn my_scoped_disabler() {
     scoped_disabler!({});
 }
 
 pub fn rtsan_bench(c: &mut Criterion) {
-    rtsan::ensure_initialized();
+    ensure_initialized();
 
     c.bench_function("nonblocking", |b| {
         b.iter(|| {
@@ -32,7 +32,7 @@ pub fn rtsan_bench(c: &mut Criterion) {
 
     c.bench_function("no-sanitize", |b| {
         b.iter(|| {
-            my_nosanitize();
+            my_no_sanitize();
         })
     });
 

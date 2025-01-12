@@ -14,7 +14,7 @@ use syn::{parse_macro_input, ItemFn};
 /// # Example
 ///
 /// ```
-/// #[rtsan::nonblocking]
+/// #[nonblocking]
 /// fn process() {
 ///     let _ = vec![0.0; 256]; // oops
 /// }
@@ -35,9 +35,9 @@ pub fn nonblocking(_attr: TokenStream, item: TokenStream) -> TokenStream {
             #(#attrs)*
             #vis #sig {
                 {
-                    rtsan::realtime_enter();
+                    rtsan_standalone::realtime_enter();
                     let __result = #block;
-                    rtsan::realtime_exit();
+                    rtsan_standalone::realtime_exit();
                     __result
                 }
             }
@@ -53,7 +53,7 @@ pub fn nonblocking(_attr: TokenStream, item: TokenStream) -> TokenStream {
 /// # Example
 ///
 /// ```
-/// #[rtsan::blocking]
+/// #[blocking]
 /// fn my_blocking_function() {}
 /// ```
 #[proc_macro_attribute]
@@ -78,7 +78,7 @@ pub fn blocking(_attr: TokenStream, item: TokenStream) -> TokenStream {
         let output = quote! {
             #(#attrs)*
             #vis #sig {
-                rtsan::notify_blocking_call(#function_name);
+                rtsan_standalone::notify_blocking_call(#function_name);
                 // Directly execute and return the block
                 #block
             }
@@ -96,13 +96,13 @@ pub fn blocking(_attr: TokenStream, item: TokenStream) -> TokenStream {
 /// # Example
 ///
 /// ```
-/// #[rtsan::no_enable]
+/// #[no_sanitize_realtime]
 /// fn process() {
 ///     let _ = vec![0.0; 256]; // ok!
 /// }
 /// ```
 #[proc_macro_attribute]
-pub fn no_sanitize(_attr: TokenStream, item: TokenStream) -> TokenStream {
+pub fn no_sanitize_realtime(_attr: TokenStream, item: TokenStream) -> TokenStream {
     // Check for a feature flag at compile time
     if cfg!(all(
         any(target_os = "macos", target_os = "linux"),
@@ -122,12 +122,12 @@ pub fn no_sanitize(_attr: TokenStream, item: TokenStream) -> TokenStream {
             #(#attrs)*
             #vis #sig {
                 {
-                    rtsan::disable();
+                    rtsan_standalone::disable();
 
                     // Wrap the block to potentially handle the return value
                     let __result = #block;
 
-                    rtsan::enable();
+                    rtsan_standalone::enable();
 
                     __result
                 }

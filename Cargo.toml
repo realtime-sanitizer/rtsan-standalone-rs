@@ -1,6 +1,6 @@
 [workspace]
 resolver = "2"
-members = ["crates/rtsan-sys", "examples/integration-example"]
+members = ["crates/rtsan-standalone-sys", "examples/integration-example"]
 
 [workspace.package]
 version = "0.1.0"
@@ -12,12 +12,12 @@ repository = "https://github.com/realtime-sanitizer/rtsan-standalone-rs"
 readme = "README.md"
 
 [workspace.dependencies]
-rtsan = { path = "." }
-rtsan-macros = { path = "crates/rtsan-macros" }
-rtsan-sys = { path = "crates/rtsan-sys" }
+rtsan-standalone = { path = "." }
+rtsan-standalone-macros = { path = "crates/rtsan-standalone-macros" }
+rtsan-standalone-sys = { path = "crates/rtsan-standalone-sys" }
 
 [package]
-name = "rtsan"
+name = "rtsan-standalone"
 description = "A Rust wrapper for RTSan standalone"
 version.workspace = true
 edition.workspace = true
@@ -28,16 +28,16 @@ repository.workspace = true
 readme.workspace = true
 
 [dependencies]
-rtsan-macros = { workspace = true }
+rtsan-standalone-macros = { workspace = true }
 
 [target.'cfg(any(target_os = "macos", target_os = "linux"))'.dependencies]
-rtsan-sys = { workspace = true, optional = true }
+rtsan-standalone-sys = { workspace = true, optional = true }
 
 [dev-dependencies]
 criterion = "0.5.1"
 
 [features]
-enable = ["rtsan-macros/enable", "rtsan-sys"]
+enable = ["rtsan-standalone-macros/enable", "rtsan-standalone-sys"]
 
 [[bench]]
 name = "rtsan-bench"

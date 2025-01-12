@@ -1,5 +1,7 @@
 use std::sync::{Arc, Mutex};
 
+use rtsan_standalone::*;
+
 pub struct MyProcessor {
     big_data: Arc<Mutex<[f32; 256]>>,
 }
@@ -16,7 +18,7 @@ impl MyProcessor {
     /// Add the [`rtsan::nonblocking`] macro to the process function.
     /// In case the default-feature `sanitize` is not provided,
     /// this macro won't do anything, so it can stay in production code.
-    #[rtsan::nonblocking]
+    #[nonblocking]
     pub fn process(&mut self, audio: &mut [f32]) {
         assert_eq!(audio.len(), 256); // wrong assertions and panics will trigger the sanitizer before the panic message is printed!
         let guard = self.big_data.lock().unwrap(); // oops !
@@ -28,7 +30,7 @@ impl MyProcessor {
 
 fn main() {
     // call this always at the start of your program
-    rtsan::ensure_initialized();
+    ensure_initialized();
 
     let mut processor = MyProcessor::default();
 

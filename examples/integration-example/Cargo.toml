@@ -8,7 +8,7 @@ repository.workspace = true
 publish = false
 
 [dependencies]
-rtsan = { workspace = true }
+rtsan-standalone = { workspace = true }
 
 [features]
-rtsan = ["rtsan/enable"]
+rtsan = ["rtsan-standalone/enable"]
