@@ -12,12 +12,12 @@ Update your `Cargo.toml` file as follows:
 rtsan = { git = "https://github.com/realtime-sanitizer/rtsan-standalone-rs", branch = "dev" }
 
 [features]
-sanitize = ["rtsan/sanitize"]
+rtsan = ["rtsan/enable"]
 ```
 
 With this setup, all RTSan macros and functions can remain in your production
 code. By default, these functions will be empty definitions and will only work
-when you activate the `sanitize` feature.
+when you activate the `enable` feature.
 
 ## Running the Example
 
@@ -38,10 +38,10 @@ Example finished without sanitizing!
 ### Running With RTSan Enabled
 
 To enable RTSan and detect real-time violations, run the example with the
-`sanitize` feature:
+`rtsan` feature:
 
 ```sh
-cargo run --package integration-example --features sanitize
+cargo run --package integration-example --features rtsan
 ```
 
 If a real-time violation is detected, RTSan will produce an error like the
