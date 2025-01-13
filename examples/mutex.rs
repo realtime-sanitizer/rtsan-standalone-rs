@@ -1,3 +1,7 @@
+// This mutex lock will only be detected on macOS.
+// The Linux mutex is spinning a couple of times before calling a system function,
+// while the macOS mutex is always calling a system function.
+
 use std::sync::{Arc, Mutex};
 
 use rtsan_standalone::*;
