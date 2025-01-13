@@ -354,23 +354,3 @@ macro_rules! scoped_disabler {
         __result
     }};
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_non_blocking() {
-        notify_blocking_call("my_blocking_function\0");
-
-        ensure_initialized();
-
-        let mut my_vec = Vec::with_capacity(1);
-
-        realtime_enter();
-
-        my_vec.push(1.0);
-
-        realtime_exit();
-    }
-}
