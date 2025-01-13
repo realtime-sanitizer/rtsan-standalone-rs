@@ -338,16 +338,18 @@ pub fn notify_blocking_call(function_name: &'static str) {
 ///
 /// #[nonblocking]
 /// fn process_preferred() {
-///     scoped_disabler!({
+///     scoped_disabler! {
 ///         let mut data = vec![0.0; 16]; // ok
-///     });
+///     };
 /// }
 /// ```
 #[macro_export]
 macro_rules! scoped_disabler {
-    ($block:block) => {{
+    ($($body:tt)*) => {{
         rtsan_standalone::disable();
-        let __result = (|| $block)();
+        let __result = (|| {
+            $($body)*
+        })();
         rtsan_standalone::enable();
         __result
     }};
