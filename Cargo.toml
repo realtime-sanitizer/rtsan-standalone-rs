@@ -1,15 +1,17 @@
 [workspace]
-resolver = "2"
 members = ["crates/rtsan-standalone-sys", "examples/integration-example"]
+resolver = "2"
 
 [workspace.package]
-version = "0.1.0"
-edition = "2021"
-rust-version = "1.64.0"
 authors = ["Stephan Eckes <stephan@neodsp.com>"]
+categories = ["development-tools"]
+edition = "2021"
+keywords = ["sanitizer", "real-time", "audio"]
 license = "Apache-2.0"
-repository = "https://github.com/realtime-sanitizer/rtsan-standalone-rs"
 readme = "README.md"
+repository = "https://github.com/realtime-sanitizer/rtsan-standalone-rs"
+rust-version = "1.64.0"
+version = "0.1.0"
 
 [workspace.dependencies]
 rtsan-standalone = { path = "." }
@@ -17,15 +19,17 @@ rtsan-standalone-macros = { path = "crates/rtsan-standalone-macros" }
 rtsan-standalone-sys = { path = "crates/rtsan-standalone-sys" }
 
 [package]
-name = "rtsan-standalone"
-description = "A Rust wrapper for RTSan standalone"
-version.workspace = true
-rust-version.workspace = true
-edition.workspace = true
 authors.workspace = true
+categories.workspace = true
+description = "A Rust wrapper for RTSan standalone"
+edition.workspace = true
+keywords.workspace = true
 license.workspace = true
-repository.workspace = true
+name = "rtsan-standalone"
 readme.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+version.workspace = true
 
 [dependencies]
 rtsan-standalone-macros = { workspace = true }

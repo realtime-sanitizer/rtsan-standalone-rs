@@ -1,20 +1,22 @@
 [package]
-name = "rtsan-standalone-macros"
-description = "Macro crate for RTSan standalone"
-version.workspace = true
-edition.workspace = true
-rust-version.workspace = true
 authors.workspace = true
+categories.workspace = true
+description = "Macro crate for RTSan standalone"
+edition.workspace = true
+keywords.workspace = true
 license.workspace = true
-repository.workspace = true
+name = "rtsan-standalone-macros"
 readme.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+version.workspace = true
 
 [lib]
 proc-macro = true
 
 [dependencies]
-syn = { version = "2.0", features = ["full"] }
 quote = "1.0"
+syn = { version = "2.0", features = ["full"] }
 
 [features]
 enable = []
