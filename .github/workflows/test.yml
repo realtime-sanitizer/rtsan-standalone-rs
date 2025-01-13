@@ -82,14 +82,33 @@ jobs:
         run: cargo +nightly update -Zminimal-versions
       - name: cargo test
         run: cargo test --locked --all-features --all-targets
-  os-check:
-    # run cargo test on mac and windows
+  macos-check:
+    # run cargo test on mac
     runs-on: ${{ matrix.os }}
     name: ${{ matrix.os }} / stable
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-latest, windows-latest]
+        os: [macos-latest]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+      - name: Install stable
+        uses: dtolnay/rust-toolchain@stable
+      - name: cargo generate-lockfile
+        if: hashFiles('Cargo.lock') == ''
+        run: cargo generate-lockfile
+      - name: cargo test
+        run: cargo test --locked --all-features --all-targets
+  windows-check:
+    # run cargo test on windows
+    runs-on: ${{ matrix.os }}
+    name: ${{ matrix.os }} / stable
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest]
     steps:
       # if your project needs OpenSSL, uncomment this to fix Windows builds.
       # it's commented out by default as the install command takes 5-10m.
@@ -106,7 +125,7 @@ jobs:
         if: hashFiles('Cargo.lock') == ''
         run: cargo generate-lockfile
       - name: cargo test
-        run: cargo test --locked --all-features --all-targets
+        run: cargo test --locked --all-targets # don't activate features as windows sanitizer should just work without `enable` feature
   # coverage:
   #   # use llvm-cov to build and collect coverage and outputs in a format that
   #   # is compatible with codecov.io

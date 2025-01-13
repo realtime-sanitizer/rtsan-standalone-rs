@@ -5,6 +5,7 @@ members = ["crates/rtsan-standalone-sys", "examples/integration-example"]
 [workspace.package]
 version = "0.1.0"
 edition = "2021"
+rust-version = "1.70"
 authors = ["Stephan Eckes <stephan@neodsp.com>"]
 license = "Apache-2.0"
 repository = "https://github.com/realtime-sanitizer/rtsan-standalone-rs"
@@ -19,6 +20,7 @@ rtsan-standalone-sys = { path = "crates/rtsan-standalone-sys" }
 name = "rtsan-standalone"
 description = "A Rust wrapper for RTSan standalone"
 version.workspace = true
+rust-version.workspace = true
 edition.workspace = true
 authors.workspace = true
 license.workspace = true
