@@ -1,7 +1,12 @@
 # rtsan-standalone-rs
 
 This is a wrapper for the standalone version of RealtimeSanitizer (RTSan) to
-detect real-time violations in Rust applications. Currently this sanitizer only works on Linux and macOS.
+detect real-time violations in Rust applications.
+More information you can find in the [Official Clang Docs](https://clang.llvm.org/docs/RealtimeSanitizer.html)
+and [RTSan Repository](https://github.com/realtime-sanitizer/rtsan).
+
+> [!WARNING]
+> Currently this sanitizer only works on Linux and macOS.
 
 ## Usage
 
