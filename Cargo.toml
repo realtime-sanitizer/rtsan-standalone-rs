@@ -5,7 +5,7 @@ members = ["crates/rtsan-standalone-sys", "examples/integration-example"]
 [workspace.package]
 version = "0.1.0"
 edition = "2021"
-rust-version = "1.56.1"
+rust-version = "1.64.0"
 authors = ["Stephan Eckes <stephan@neodsp.com>"]
 license = "Apache-2.0"
 repository = "https://github.com/realtime-sanitizer/rtsan-standalone-rs"
