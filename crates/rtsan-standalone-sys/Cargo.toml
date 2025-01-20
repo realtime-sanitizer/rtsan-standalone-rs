@@ -1,0 +1,15 @@
+[package]
+authors.workspace = true
+categories.workspace = true
+description = "Unsafe Rust bindings for RTSan standalone library"
+edition.workspace = true
+keywords.workspace = true
+license.workspace = true
+name = "rtsan-standalone-sys"
+repository.workspace = true
+rust-version.workspace = true
+version.workspace = true
+
+[build-dependencies]
+num_cpus = "1.16"
+tempfile = "3"
