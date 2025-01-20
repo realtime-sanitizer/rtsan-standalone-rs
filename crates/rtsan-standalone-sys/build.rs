@@ -7,7 +7,7 @@ use tempfile::tempdir;
 fn main() {
     #[cfg(not(any(target_os = "macos", target_os = "linux")))]
     {
-        compile_error!("cargo:warning=rtsan is currently only supported on macOS and Linux.")
+        compile_error!("RTSan is currently only supported on macOS and Linux.")
     }
 
     let target_os = env::var("CARGO_CFG_TARGET_OS").unwrap();
