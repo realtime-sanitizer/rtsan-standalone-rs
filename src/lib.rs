@@ -346,7 +346,7 @@ pub fn notify_blocking_call(function_name: &'static str) {
 #[macro_export]
 macro_rules! scoped_disabler {
     ($($body:tt)*) => {{
-        let __guard = ScopedDisabler::default();
+        let __guard = rtsan_standalone::ScopedDisabler::default();
         $($body)*
     }};
 }
