@@ -92,3 +92,11 @@ fn test_early_return() {
     let a = early_return(&data);
     assert_eq!(a, Some(data.as_slice()));
 }
+
+#[test]
+#[ignore = "violation"]
+#[nonblocking]
+fn test_detection() {
+    ensure_initialized();
+    blocking_function();
+}
