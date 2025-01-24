@@ -37,10 +37,15 @@ rtsan-standalone-sys = { workspace = true, optional = true }
 
 [dev-dependencies]
 criterion = "0.5.1"
+libtest-mimic = "0.8.1"
 
 [features]
 enable = ["rtsan-standalone-macros/enable", "rtsan-standalone-sys"]
 
 [[bench]]
 name = "rtsan-bench"
+harness = false
+
+[[test]]
+name = "violations"
 harness = false
