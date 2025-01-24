@@ -346,11 +346,80 @@ pub fn notify_blocking_call(function_name: &'static str) {
 #[macro_export]
 macro_rules! scoped_disabler {
     ($($body:tt)*) => {{
-        rtsan_standalone::disable();
-        let __result = (|| {
-            $($body)*
-        })();
-        rtsan_standalone::enable();
-        __result
+        let __guard = rtsan_standalone::ScopedDisabler::default();
+        $($body)*
     }};
+}
+
+/// Enter real-time context for the lifetime of the object.
+/// When in a real-time context, RTSan interceptors will error if realtime
+/// violations are detected.
+/// Corresponds to a [`nonblocking`] macro.
+///
+/// # Example
+///
+/// ```
+/// use rtsan_standalone::*;
+///
+/// fn process() {
+///     {
+///         let _guard = ScopedSanitizeRealtime::default();
+///         let _ = vec![0.0; 256]; // not ok
+///     }
+///     let _ = vec![0.0; 256]; // ok
+/// }
+pub struct ScopedSanitizeRealtime;
+
+impl Default for ScopedSanitizeRealtime {
+    fn default() -> Self {
+        realtime_enter();
+        Self
+    }
+}
+
+impl Drop for ScopedSanitizeRealtime {
+    fn drop(&mut self) {
+        realtime_exit();
+    }
+}
+
+/// Disable all RTSan error reporting in an otherwise real-time context,
+/// for the lifetime of the object.
+/// Corresponds to a [`scoped_disabler`] or [`no_sanitize_realtime`] macro.
+///
+/// # Example
+///
+/// ```
+/// use rtsan_standalone::*;
+///
+/// #[nonblocking]
+/// fn process() {
+///     {
+///         let _guard = ScopedDisabler::default();
+///         let mut data = vec![0.0; 16]; // ok
+///     }
+///     let mut data = vec![0.0; 16]; // not ok
+/// }
+///
+/// // Macro usage preferred
+/// #[nonblocking]
+/// fn process_preferred() {
+///     scoped_disabler!({
+///         let mut data = vec![0.0; 16]; // ok
+///     });
+///     let mut data = vec![0.0; 16]; // not ok
+/// }
+pub struct ScopedDisabler;
+
+impl Default for ScopedDisabler {
+    fn default() -> Self {
+        disable();
+        Self
+    }
+}
+
+impl Drop for ScopedDisabler {
+    fn drop(&mut self) {
+        enable();
+    }
 }

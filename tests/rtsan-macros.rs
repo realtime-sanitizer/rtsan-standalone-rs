@@ -1,4 +1,6 @@
-use rtsan_standalone::*;
+use rtsan_standalone::{
+    blocking, ensure_initialized, no_sanitize_realtime, nonblocking, scoped_disabler,
+};
 
 #[nonblocking]
 fn create_array_function() {
@@ -66,4 +68,27 @@ fn test_blocking() {
     ensure_initialized();
 
     call_blocking_function();
+}
+
+#[nonblocking]
+fn early_return(r: &[f32]) -> Option<&[f32]> {
+    let r = r;
+    for r in r.iter() {
+        if *r == 1.0 {
+            return None;
+        }
+    }
+    Some(r)
+}
+
+#[test]
+fn test_early_return() {
+    ensure_initialized();
+    let data = vec![1.0; 16];
+    let a = early_return(&data);
+    assert_eq!(a, None);
+
+    let data = vec![0.0; 16];
+    let a = early_return(&data);
+    assert_eq!(a, Some(data.as_slice()));
 }
