@@ -35,7 +35,7 @@ pub fn nonblocking(_attr: TokenStream, item: TokenStream) -> TokenStream {
             #(#attrs)*
             #vis #sig {
                 rtsan_standalone::realtime_enter();
-                let __result = #block;
+                let __result = (|| { #block })();
                 rtsan_standalone::realtime_exit();
                 __result
             }
@@ -120,7 +120,7 @@ pub fn no_sanitize_realtime(_attr: TokenStream, item: TokenStream) -> TokenStrea
             #(#attrs)*
             #vis #sig {
                 rtsan_standalone::disable();
-                let __result = #block;
+                let __result = (|| { #block })();
                 rtsan_standalone::enable();
                 __result
             }
