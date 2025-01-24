@@ -1,4 +1,6 @@
-use rtsan_standalone::*;
+use rtsan_standalone::{
+    blocking, ensure_initialized, no_sanitize_realtime, nonblocking, scoped_disabler,
+};
 
 #[nonblocking]
 fn create_array_function() {
