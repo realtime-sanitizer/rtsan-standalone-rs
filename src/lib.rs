@@ -362,14 +362,11 @@ macro_rules! scoped_disabler {
 /// use rtsan_standalone::*;
 ///
 /// fn process() {
-///     let _guard = ScopedSanitizeRealtime::default();
-///     let _ = vec![0.0; 256]; // oops!
-/// }
-///
-/// // Macro usage preferred
-/// #[nonblocking]
-/// fn process_preferred() {
-///     let _ = vec![0.0; 256]; // oops!
+///     {
+///         let _guard = ScopedSanitizeRealtime::default();
+///         let _ = vec![0.0; 256]; // not ok
+///     }
+///     let _ = vec![0.0; 256]; // ok
 /// }
 pub struct ScopedSanitizeRealtime;
 
