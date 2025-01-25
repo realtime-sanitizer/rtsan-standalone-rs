@@ -47,11 +47,11 @@ fn main() -> ExitCode {
                 let output = process.wait_with_output().unwrap();
                 // println!("{output:?}");
                 if output.status.success() {
-                    Err(Failed::from("no violation detected"))
+                    Err(Failed::from(format!("no violation detected. output: {output:?}")))
                 } else if regex.is_match(&output.stderr) {
                     Ok(())
                 } else {
-                    Err(Failed::from("stderr didn't match regex"))
+                    Err(Failed::from(format!("stderr didn't match regex. output: {output:?}")))
                 }
             })
         })

@@ -1,13 +1,12 @@
-// 
+// Call to blocking function `violation` in real-time context!
 
 use rtsan_standalone::*;
 
+#[nonblocking]
 fn main() {
     ensure_initialized();
     violation();
 }
 
-#[nonblocking]
-fn violation() {
-    let _ = Box::new(4);
-}
+#[blocking]
+fn violation() {}

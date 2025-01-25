@@ -1,4 +1,4 @@
-// 
+// Intercepted call to real-time unsafe function `malloc` in real-time context!\n
 
 use rtsan_standalone::*;
 
