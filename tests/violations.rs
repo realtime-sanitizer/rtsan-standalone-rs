@@ -15,7 +15,7 @@ fn main() -> ExitCode {
     // collect test cases
     for file in read_dir("detection-tests/examples").unwrap() {
         let file = file.unwrap();
-        println!("{:?}", file);
+        // println!("{:?}", file);
         assert!(file.metadata().unwrap().is_file());
         let content = std::fs::read_to_string(file.path()).unwrap();
         let first_line = content.lines().next().unwrap().strip_prefix("// ").unwrap();
@@ -24,7 +24,7 @@ fn main() -> ExitCode {
         test_cases.push((file.file_name().into_string().unwrap().strip_suffix(".rs").unwrap().to_string(), regex));
     }
 
-    println!("{test_cases:?}");
+    // println!("{test_cases:?}");
     // create tests
     let tests = test_cases
         .into_iter()
@@ -45,7 +45,7 @@ fn main() -> ExitCode {
                     .spawn()
                     .unwrap();
                 let output = process.wait_with_output().unwrap();
-                println!("{output:?}");
+                // println!("{output:?}");
                 if output.status.success() {
                     Err(Failed::from("no violation detected"))
                 } else if regex.is_match(&output.stderr) {
@@ -57,7 +57,7 @@ fn main() -> ExitCode {
         })
         .collect();
 
-    println!("{tests:?}");
+    // println!("{tests:?}");
 
     libtest_mimic::run(&args, tests).exit_code()
 }
