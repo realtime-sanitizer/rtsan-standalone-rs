@@ -1,5 +1,5 @@
 [workspace]
-members = ["crates/rtsan-standalone-sys", "examples/integration-example"]
+members = ["crates/rtsan-standalone-sys", "examples/integration-example", "detection-tests"]
 resolver = "2"
 
 [workspace.package]

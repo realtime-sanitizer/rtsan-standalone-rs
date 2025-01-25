@@ -1,3 +1,9 @@
+use std::{
+    future::Future,
+    pin,
+    task::{Context, Waker},
+};
+
 use rtsan_standalone::{
     blocking, ensure_initialized, no_sanitize_realtime, nonblocking, scoped_disabler,
 };
@@ -72,7 +78,7 @@ fn test_blocking() {
 
 #[nonblocking]
 fn early_return(r: &[f32]) -> Option<&[f32]> {
-    let r = r;
+    // let r = r;
     for r in r.iter() {
         if *r == 1.0 {
             return None;
@@ -100,3 +106,35 @@ fn test_detection() {
     ensure_initialized();
     blocking_function();
 }
+
+// #[nonblocking]
+// async fn wait() {
+//     // runs before polling for the first time
+//     // blocking_function();
+//     scoped_disabler! {
+//         println!("initialize");
+//     }
+//     std::future::ready(()).await;
+//     // blocking_function();
+//     std::future::pending::<()>().await;
+//     blocking_function();
+// }
+
+// #[test]
+// fn executor() {
+//     ensure_initialized();
+//     let mut future = pin::pin!(wait());
+//     scoped_disabler! {
+//         println!("created");
+//     }
+
+//     // blocking_function();
+//     let mut context = Context::from_waker(Waker::noop());
+//     assert!(future.as_mut().poll(&mut context).is_pending());
+//     scoped_disabler! {
+//         println!("ran once");
+//     }
+//     // blocking_function();
+//     assert!(future.as_mut().poll(&mut context).is_pending());
+//     assert!(future.as_mut().poll(&mut context).is_pending());
+// }

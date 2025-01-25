@@ -1,23 +1,57 @@
 extern crate libtest_mimic;
 
-use std::process::{Command, ExitCode, Stdio};
-use libtest_mimic::{Arguments, Trial, Failed};
+use libtest_mimic::{Arguments, Failed, Trial};
+use std::{
+    fs::read_dir,
+    process::{Command, ExitCode, Stdio},
+};
 
 fn main() -> ExitCode {
     let args = Arguments::from_args();
 
-    let test_names = ["test_detection"];
+    let mut test_cases = Vec::new();
 
-    let tests = test_names.iter().map(|name| {
-        Trial::test(name.to_string(), || {
-            let status = Command::new("cargo").args(["test", name, "--features", "enable", "--", "--ignored"]).stderr(Stdio::null()).status().unwrap();
-            if status.success() {
-                Err(Failed::without_message())
-            } else {
-                Ok(())
-            }
+    // collect test cases
+    for file in read_dir("detection-tests/examples").unwrap() {
+        let file = file.unwrap();
+        println!("{:?}", file);
+        assert!(file.metadata().unwrap().is_file());
+
+        test_cases.push(file.file_name().into_string().unwrap().strip_suffix(".rs").unwrap().to_string());
+    }
+
+    println!("{test_cases:?}");
+    // create tests
+    let tests = test_cases
+        .into_iter()
+        .map(|name| {
+            Trial::test(name.clone(), || {
+                let process = Command::new("cargo")
+                    .args([
+                        "run".to_owned(),
+                        "--package".to_owned(),
+                        "detection-tests".to_owned(),
+                        "--example".to_owned(),
+                        name,
+                        "--features".to_owned(),
+                        "rtsan".to_owned(),
+                    ])
+                    .stderr(Stdio::piped())
+                    .stdout(Stdio::piped())
+                    .spawn()
+                    .unwrap();
+                let output = process.wait_with_output().unwrap();
+                println!("{output:?}");
+                if output.status.success() {
+                    Err(Failed::without_message())
+                } else {
+                    Ok(())
+                }
+            })
         })
-    }).collect();
+        .collect();
+
+    println!("{tests:?}");
 
     libtest_mimic::run(&args, tests).exit_code()
 }
