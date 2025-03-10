@@ -59,6 +59,8 @@ fn main() {
             "-n",
             "--depth=1",
             "--filter=tree:0",
+            "--branch",
+            "llvmorg-20.1.0",
             "https://github.com/llvm/llvm-project.git",
             llvm_project_dir.to_str().unwrap(),
         ],
