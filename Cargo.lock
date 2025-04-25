@@ -701,7 +701,7 @@ dependencies = [
 
 [[package]]
 name = "integration-example"
-version = "0.1.1"
+version = "0.1.2"
 dependencies = [
  "rtsan-standalone",
 ]
@@ -1085,7 +1085,7 @@ dependencies = [
 
 [[package]]
 name = "rtsan-standalone"
-version = "0.1.1"
+version = "0.1.2"
 dependencies = [
  "criterion",
  "rtsan-standalone-macros",
@@ -1094,7 +1094,7 @@ dependencies = [
 
 [[package]]
 name = "rtsan-standalone-macros"
-version = "0.1.1"
+version = "0.1.2"
 dependencies = [
  "quote",
  "syn",

@@ -85,10 +85,12 @@ jobs:
           submodules: true
       - name: Install nightly
         uses: dtolnay/rust-toolchain@nightly
-      - name: Install cargo-docs-rs
-        uses: dtolnay/install@cargo-docs-rs
-      - name: cargo docs-rs
-        run: cargo docs-rs
+      # - name: Install cargo-docs-rs
+      #   uses: dtolnay/install@cargo-docs-rs
+      # - name: cargo docs-rs
+      #   run: cargo docs-rs
+      - name: Doc warnings
+        run: RUSTDOCFLAGS="--deny warnings" cargo doc --locked --document-private-items
   hack:
     # cargo-hack checks combinations of feature flags to ensure that features are all additive
     # which is required for feature unification
