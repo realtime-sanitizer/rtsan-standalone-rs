@@ -1,12 +1,10 @@
 //! # rtsan-standalone-rs
 //!
-//! This is a wrapper for the standalone version of RealtimeSanitizer (RTSan) to
-//! detect real-time violations in Rust applications.
+//! This is a wrapper for the standalone version of RealtimeSanitizer (RTSan) to detect real-time violations in Rust applications.
 //! You can find more information in the [Official Clang Docs](https://clang.llvm.org/docs/RealtimeSanitizer.html)
 //! and the [RTSan Repository](https://github.com/realtime-sanitizer/rtsan).
 //!
-//! > [!WARNING]
-//! > Currently, this sanitizer only works on Linux and macOS.
+//! Currently, this sanitizer only works on Linux, macOS and iOS.
 //!
 //! ## Usage
 //!
@@ -37,8 +35,7 @@
 //!
 //! ## Setup
 //!
-//! RTSan currently supports Linux and macOS. Ensure you have the following tools
-//! installed: `git`, `make`, and `cmake` (version 3.20.0 or higher).
+//! RTSan currently supports Linux, macOS and iOS.
 //!
 //! To use RTSan, add it as a dependency in your `Cargo.toml` file and conditionally add the
 //! `enable` feature:
@@ -56,53 +53,43 @@
 //! ```sh
 //! cargo run --features rtsan
 //! ```
+//! For more help, refer to the integration example [README](examples/integration-example/README.md).
 //!
+//! ### Pre-built Libraries
+//!
+//! By default this crate is downloading pre-built libraries from the repo [rtsan-libs](https://github.com/realtime-sanitizer/rtsan-libs).
+//!
+//! If you do not wish to use our pre-built libs you can disable the default features and either let the build script build the library automatically
+//! or provide a custom build of rtsan.
+//!
+//! ### Building locally
+//!
+//! Ensure you have the following tools installed: `git`, `make`, and `cmake` (version 3.20.0 or higher).
+//! Disable default features when adding `rtsan-standalone` to your project.
 //! The initial build of `rtsan-standalone-sys` may take a few minutes to compile the LLVM
-//! libraries.
+//! libraries. After building the crate for the first time, the library is located at:
 //!
-//! For more help, refer to the integration example
-//! [README](examples/integration-example/README.md).
-//!
-//! ## Pre-built Library
-//!
-//! To optimize compile times and avoid rebuilding rtsan for each project, you can use a pre-built library. This section explains how to set up and use the pre-built library.
-//!
-//! ### Library Location
-//! After building the crate for the first time, the library is typically located at:
 //! ```sh
 //! target/debug/build/rtsan-standalone-sys-*/out/
 //! ```
 //!
-//! ### Setting Up RTSAN_LIBRARY_PATH
-//! To use the pre-built library, you need to set the `RTSAN_LIBRARY_PATH` environment variable. Here are three ways to do this:
+//! ### Using Custom-Built RTSan Libraries
 //!
-//! 1. **Direct Shell Command**
-//!    ```sh
-//!    # Linux
-//!    RTSAN_LIBRARY_PATH=/path/to/libclang_rt.rtsan-x86_64.a cargo run --features enable
+//! To use a custom-built library, you need to set the `RTSAN_LIBRARY_PATH` environment variable.
+//! When a library gets provided like this it will always be prioritized.
 //!
-//!    # macOS
-//!    RTSAN_LIBRARY_PATH=/path/to/libclang_rt.rtsan_osx_dynamic.dylib cargo run --features enable
-//!    ```
-//!
-//! 2. **Cargo Configuration**
-//!    Add the following to your `.cargo/config.toml`:
-//!    ```toml
-//!    [env]
-//!    RTSAN_LIBRARY_PATH = "/path/to/libclang_rt.rtsan-x86_64.a"
-//!    ```
-//!
-//! 3. **Shell Configuration**
-//!    Add this line to your shell's configuration file (`.zshrc`, `.bashrc`, etc.):
-//!    ```sh
-//!    export RTSAN_LIBRARY_PATH="/path/to/libclang_rt.rtsan-x86_64.a"
-//!    ```
+//! ```sh
+//! # Linux
+//! RTSAN_LIBRARY_PATH=/path/to/libclang_rt.rtsan-x86_64.a cargo run --features enable
+//! ```
 //!
 //! ## Features
 //!
 //! The `enable` feature allows you to enable or disable sanitizing for your
 //! project. This ensures that all RTSan functions and macros can remain in your
 //! production code without impacting performance when the feature is disabled.
+//!
+//! The `prebuilt-libs` feature enables automatic downloading of libraries from our repository and is activated by default, eliminating the need for local compilation.
 //!
 //! ## Examples
 //!
@@ -121,12 +108,14 @@
 //! ```
 //!
 //! ## RTSan Options
+//!
 //! You can set different options in RTSan like this:
 //!
 //! ```sh
 //! RTSAN_OPTIONS=halt_on_error=false cargo run --example mutex --features enable
 //! ```
-//! For a full list of options see here: https://clang.llvm.org/docs/RealtimeSanitizer.html#run-time-flags.
+//!
+//! For a full list of options see here: [https://clang.llvm.org/docs/RealtimeSanitizer.html#run-time-flags](https://clang.llvm.org/docs/RealtimeSanitizer.html#run-time-flags).
 //!
 //! ## Contact
 //!
@@ -134,11 +123,11 @@
 //! implementation was authored by David Trevelyan and Chris Apple, while the Rust
 //! wrapper was developed by Stephan Eckes. Feedback and contributions are welcome!
 //!
-//! - **Discord**: `RealtimeSanitizer (RTSan)` Discord Channel
+//! - **Discord**: [RealtimeSanitizer (RTSan)](https://discord.com/invite/DZqjbmSZzZ) Discord Channel
 //! - **Email**: [realtime.sanitizer@gmail.com](mailto:realtime.sanitizer@gmail.com)
 //! - **GitHub Issues**: Submit your queries or suggestions directly to this
 //!   repository.
-//!
+
 #![cfg_attr(not(test), no_std)]
 #![allow(clippy::needless_doctest_main)]
 
