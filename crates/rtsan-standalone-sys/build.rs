@@ -52,6 +52,7 @@ fn main() {
             "x86_64-unknown-linux-gnu" => "libclang_rt.rtsan_linux_x86_64.a",
             "aarch64-unknown-linux-gnu" => "libclang_rt.rtsan_linux_aarch64.a",
             "x86_64-apple-darwin" => "libclang_rt.rtsan_osx_dynamic.dylib",
+            "aarch64-apple-darwin" => "libclang_rt.rtsan_osx_dynamic.dylib",
             "aarch64-apple-ios" => "libclang_rt.rtsan_ios_dynamic.dylib",
             "x86_64-apple-ios" => "libclang_rt.rtsan_iossim_dynamic.dylib",
             _ => panic!("Unsupported target platform: {}", target),
