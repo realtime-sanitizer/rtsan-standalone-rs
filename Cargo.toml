@@ -39,7 +39,10 @@ rtsan-standalone-sys = { workspace = true, optional = true }
 criterion = "0.5.1"
 
 [features]
+default = ["prebuilt-libs"]
+
 enable = ["rtsan-standalone-macros/enable", "rtsan-standalone-sys"]
+prebuilt-libs = ["rtsan-standalone-sys?/prebuilt-libs"]
 
 [[bench]]
 name = "rtsan-bench"

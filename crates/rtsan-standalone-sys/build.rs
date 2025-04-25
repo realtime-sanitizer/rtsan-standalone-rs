@@ -4,12 +4,15 @@ use std::path::{Path, PathBuf};
 use std::process::Command;
 use tempfile::tempdir;
 
+const RTSAN_VERSION: &str = "v20.1.1.1";
+
 fn main() {
-    #[cfg(not(any(target_os = "macos", target_os = "linux")))]
+    #[cfg(not(any(target_os = "macos", target_os = "linux", target_os = "ios")))]
     {
-        compile_error!("RTSan is currently only supported on macOS and Linux.")
+        compile_error!("RTSan is currently only supported on macOS, Linux, and iOS.")
     }
 
+    let target = env::var("TARGET").expect("TARGET env var not set");
     let target_os = env::var("CARGO_CFG_TARGET_OS").unwrap();
     let target_arch = env::var("CARGO_CFG_TARGET_ARCH").unwrap();
     let out_dir = PathBuf::from(env::var("OUT_DIR").unwrap());
@@ -35,6 +38,41 @@ fn main() {
         fs::copy(&prebuilt_path, &dest_lib_path).expect("Failed to copy library to OUT_DIR");
 
         setup_linking(&dest_lib_path, &target_os);
+        return;
+    }
+
+    // Check if pre-built libraries should be downloaded
+    if cfg!(feature = "prebuilt-libs") {
+        let base_url = format!(
+            "https://github.com/realtime-sanitizer/rtsan-libs/releases/download/{}/",
+            RTSAN_VERSION
+        );
+
+        let filename = match target.as_str() {
+            "x86_64-unknown-linux-gnu" => "libclang_rt.rtsan_linux_x86_64.a",
+            "aarch64-unknown-linux-gnu" => "libclang_rt.rtsan_linux_aarch64.a",
+            "x86_64-apple-darwin" => "libclang_rt.rtsan_osx_dynamic.dylib",
+            "aarch64-apple-ios" => "libclang_rt.rtsan_ios_dynamic.dylib",
+            "x86_64-apple-ios" => "libclang_rt.rtsan_iossim_dynamic.dylib",
+            _ => panic!("Unsupported target platform: {}", target),
+        };
+
+        let url = base_url + filename;
+
+        let out_dir = PathBuf::from(env::var("OUT_DIR").unwrap());
+        let out_path = out_dir.join(&filename);
+
+        // Download if not already present
+        if !out_path.exists() {
+            println!("Downloading {} to {:?}", url, out_path);
+            let response = reqwest::blocking::get(&url)
+                .expect("Failed to download file")
+                .bytes()
+                .expect("Failed to read bytes");
+            fs::write(&out_path, &response).expect("Failed to write library file");
+        }
+
+        setup_linking(&out_path, &target_os);
         return;
     }
 
