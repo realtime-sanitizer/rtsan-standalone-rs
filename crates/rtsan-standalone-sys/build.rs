@@ -4,7 +4,7 @@ use std::path::{Path, PathBuf};
 use std::process::Command;
 use tempfile::tempdir;
 
-const RTSAN_VERSION: &str = "v20.1.1.1";
+const LLVM_VERSION: &str = "v20.1.1.1";
 
 fn main() {
     #[cfg(not(any(target_os = "macos", target_os = "linux", target_os = "ios")))]
@@ -45,7 +45,7 @@ fn main() {
     if cfg!(feature = "prebuilt-libs") {
         let base_url = format!(
             "https://github.com/realtime-sanitizer/rtsan-libs/releases/download/{}/",
-            RTSAN_VERSION
+            LLVM_VERSION
         );
 
         let filename = match target.as_str() {
