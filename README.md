@@ -4,8 +4,7 @@ This is a wrapper for the standalone version of RealtimeSanitizer (RTSan) to det
 You can find more information in the [Official Clang Docs](https://clang.llvm.org/docs/RealtimeSanitizer.html)
 and the [RTSan Repository](https://github.com/realtime-sanitizer/rtsan).
 
-> [!WARNING]
-> Currently, this sanitizer only works on Linux, macOS and iOS.
+> ⚠️ **Warning:** Currently, this sanitizer only works on Linux, macOS and iOS.
 
 ## Usage
 
@@ -58,9 +57,9 @@ For more help, refer to the integration example [README](examples/integration-ex
 
 ### Pre-built Libraries
 
-By default this crate is downloading pre-built libraries from the repo [rtsan-libs](https://github.com/realtime-sanitizer/rtsan-libs).
+By default this crate downloads pre-built libraries from the repo [rtsan-libs](https://github.com/realtime-sanitizer/rtsan-libs).
 
-If you do not wish to use our pre-built libs you can disable the default features and either let the build script build the library automatically
+If you do not wish to use the pre-built libraries you can disable the default features and either let the build script build the library automatically
 or provide a custom build of rtsan.
 
 ### Building locally
