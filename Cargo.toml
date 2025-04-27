@@ -15,8 +15,8 @@ version = "0.1.2"
 
 [workspace.dependencies]
 rtsan-standalone = { path = "." }
-rtsan-standalone-macros = { version = "0.1.1", path = "crates/rtsan-standalone-macros" }
-rtsan-standalone-sys = { version = "0.1.0", path = "crates/rtsan-standalone-sys" }
+rtsan-standalone-macros = { version = "0.1.2", path = "crates/rtsan-standalone-macros" }
+rtsan-standalone-sys = { version = "0.1.1", path = "crates/rtsan-standalone-sys" }
 
 [package]
 authors.workspace = true
