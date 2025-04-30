@@ -122,4 +122,4 @@ jobs:
         with:
           toolchain: ${{ matrix.msrv }}
       - name: cargo +${{ matrix.msrv }} check --all-features
-        run: cargo check --all-features
+        run: RTSAN_ENABLE=1 cargo check --all-features

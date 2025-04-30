@@ -28,7 +28,7 @@ jobs:
         if: hashFiles('Cargo.lock') == ''
         run: cargo generate-lockfile
       - name: cargo test --locked
-        run: cargo test --locked --all-features --all-targets
+        run: RTSAN_ENABLE=1 cargo test --locked --all-features --all-targets
   # https://twitter.com/alcuadrado/status/1571291687837732873
   update:
     # This action checks that updating the dependencies of this crate to the latest available that
@@ -53,6 +53,6 @@ jobs:
         run: cargo update
       - name: cargo test
         if: hashFiles('Cargo.lock') != ''
-        run: cargo test --locked --all-features --all-targets
+        run: RTSAN_ENABLE=1 cargo test --locked --all-features --all-targets
         env:
           RUSTFLAGS: -D deprecated

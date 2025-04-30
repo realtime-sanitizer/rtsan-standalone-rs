@@ -39,7 +39,7 @@ jobs:
         run: cargo generate-lockfile
       # https://twitter.com/jonhoo/status/1571290371124260865
       - name: cargo test --locked
-        run: cargo test --locked --all-features --all-targets
+        run: RTSAN_ENABLE=1 cargo test --locked --all-features --all-targets
       # https://github.com/rust-lang/cargo/issues/6669
       - name: cargo test --doc
         run: cargo test --locked --all-features --doc
@@ -61,7 +61,7 @@ jobs:
         if: hashFiles('Cargo.lock') == ''
         run: cargo generate-lockfile
       - name: cargo test
-        run: cargo test --locked --all-features --all-targets
+        run: RTSAN_ENABLE=1 cargo test --locked --all-features --all-targets
   macos-check:
     # run cargo test on mac
     runs-on: ${{ matrix.os }}
@@ -80,7 +80,7 @@ jobs:
         if: hashFiles('Cargo.lock') == ''
         run: cargo generate-lockfile
       - name: cargo test
-        run: cargo test --locked --all-features --all-targets
+        run: RTSAN_ENABLE=1 cargo test --locked --all-features --all-targets
   windows-check:
     # run cargo test on windows
     runs-on: ${{ matrix.os }}
@@ -105,4 +105,4 @@ jobs:
         if: hashFiles('Cargo.lock') == ''
         run: cargo generate-lockfile
       - name: cargo test
-        run: cargo test --locked --all-targets # don't activate features as windows sanitizer should just work without `enable` feature
+        run: cargo test --locked --all-features --all-targets

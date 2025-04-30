@@ -29,7 +29,7 @@ pub use rtsan_standalone_macros::*;
 /// ```
 #[inline]
 pub fn realtime_enter() {
-    #[cfg(all(any(target_os = "macos", target_os = "linux"), feature = "enable"))]
+    #[cfg(rtsan_enabled)]
     unsafe {
         rtsan_standalone_sys::__rtsan_realtime_enter();
     }
@@ -59,7 +59,7 @@ pub fn realtime_enter() {
 /// ```
 #[inline]
 pub fn realtime_exit() {
-    #[cfg(all(any(target_os = "macos", target_os = "linux"), feature = "enable"))]
+    #[cfg(rtsan_enabled)]
     unsafe {
         rtsan_standalone_sys::__rtsan_realtime_exit();
     }
@@ -93,7 +93,7 @@ pub fn realtime_exit() {
 /// }
 #[inline]
 pub fn disable() {
-    #[cfg(all(any(target_os = "macos", target_os = "linux"), feature = "enable"))]
+    #[cfg(rtsan_enabled)]
     unsafe {
         rtsan_standalone_sys::__rtsan_disable();
     }
@@ -127,7 +127,7 @@ pub fn disable() {
 /// }
 #[inline]
 pub fn enable() {
-    #[cfg(all(any(target_os = "macos", target_os = "linux"), feature = "enable"))]
+    #[cfg(rtsan_enabled)]
     unsafe {
         rtsan_standalone_sys::__rtsan_enable();
     }
@@ -147,7 +147,7 @@ pub fn enable() {
 /// }
 /// ```
 pub fn ensure_initialized() {
-    #[cfg(all(any(target_os = "macos", target_os = "linux"), feature = "enable"))]
+    #[cfg(rtsan_enabled)]
     unsafe {
         rtsan_standalone_sys::__rtsan_ensure_initialized();
     }
@@ -176,7 +176,7 @@ pub fn ensure_initialized() {
 /// ```
 #[allow(unused_variables)]
 pub fn notify_blocking_call(function_name: &'static str) {
-    #[cfg(all(any(target_os = "macos", target_os = "linux"), feature = "enable"))]
+    #[cfg(rtsan_enabled)]
     {
         if !function_name.ends_with('\0') {
             panic!("`notify_blocking_call` requires a null-terminated function name (e.g., \"my_function_name\\0\").");
