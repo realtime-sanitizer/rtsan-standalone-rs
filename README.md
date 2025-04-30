@@ -37,23 +37,18 @@ SUMMARY: RealtimeSanitizer: unsafe-library-call /rustc/f6e511eec7342f59a25f7c053
 
 RTSan currently supports Linux, macOS and iOS.
 
-To use RTSan, add it as a dependency in your `Cargo.toml` file and conditionally add the
-`enable` feature:
+To use RTSan, add it as a dependency in your `Cargo.toml` file:
 
 ```toml
 [dependencies]
-rtsan-standalone = "0.1.0"
-
-[features]
-rtsan = ["rtsan-standalone/enable"]
+rtsan-standalone = "0.2.0"
 ```
 
 To run your project with sanitizing enabled, execute:
 
 ```sh
-cargo run --features rtsan
+RTSAN_ENABLE=1 cargo run
 ```
-For more help, refer to the integration example [README](examples/integration-example/README.md).
 
 ### Pre-built Libraries
 
@@ -80,16 +75,12 @@ When a library gets provided like this it will always be prioritized.
 
 ```sh
 # Linux
-RTSAN_LIBRARY_PATH=/path/to/libclang_rt.rtsan-x86_64.a cargo run --features enable
+RTSAN_LIBRARY_PATH=/path/to/libclang_rt.rtsan-x86_64.a RTSAN_ENABLE=1 cargo run
 ```
 
 ## Features
 
-The `enable` feature allows you to enable or disable sanitizing for your
-project. This ensures that all RTSan functions and macros can remain in your
-production code without impacting performance when the feature is disabled.
-
-The `prebuilt-libs` feature enables automatic downloading of libraries from our repository and is activated by default, eliminating the need for local compilation.
+The `prebuilt-libs` feature enables automatic downloading of libraries from [rtsan-libs](https://github.com/realtime-sanitizer/rtsan-libs) and is activated by default, eliminating the need for local compilation.
 
 ## Examples
 
@@ -97,14 +88,7 @@ Explore the various possibilities with RTSan through the provided examples. For
 instance, to run the [`vector`](examples/vector.rs) example, execute:
 
 ```sh
-cargo run --example vector --features enable
-```
-
-The [integration example](./examples/integration-example/) demonstrates how to
-conditionally build the sanitizer into your project:
-
-```sh
-cargo run --package integration-example --features rtsan
+RTSAN_ENABLE=1 cargo run --example vector
 ```
 
 ## RTSan Options
@@ -112,7 +96,7 @@ cargo run --package integration-example --features rtsan
 You can set different options in RTSan like this:
 
 ```sh
-RTSAN_OPTIONS=halt_on_error=false cargo run --example mutex --features enable
+RTSAN_OPTIONS=halt_on_error=false RTSAN_ENABLE=1 cargo run --example mutex
 ```
 
 For a full list of options see here: [https://clang.llvm.org/docs/RealtimeSanitizer.html#run-time-flags](https://clang.llvm.org/docs/RealtimeSanitizer.html#run-time-flags).

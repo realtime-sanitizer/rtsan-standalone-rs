@@ -16,6 +16,7 @@ Before creating a release, check that everything can be published to crates.io.
   - Increase workspace version number
   - Check if `rtsan-standalone-macros` can be pubslished with `cargo publish -p rtsan-standalone-macros --dry-run`
   - Set `rtsan-stanalone-macros` dependency version number in top-level `Cargo.toml` to the newest version
+3. Check that the right version numbers are reflected in `README.md`.
 3. Create a new release on the GitHub main branch with a tag that has the same version number as the workspace
 4. Set local repository to the release tag and publish to crates.io
   - `cargo publish -p rtsan-standalone-sys` (if changed)

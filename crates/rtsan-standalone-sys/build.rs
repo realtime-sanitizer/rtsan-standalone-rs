@@ -9,7 +9,7 @@ const LLVM_VERSION: &str = "v20.1.1.1";
 fn main() {
     println!("cargo::rustc-check-cfg=cfg(rtsan_enabled)");
 
-    const RTSAN_ENV_VAR: &str = "RTSAN";
+    const RTSAN_ENV_VAR: &str = "RTSAN_ENABLE";
     println!("cargo:rerun-if-env-changed={}", RTSAN_ENV_VAR);
 
     let target = std::env::var("TARGET").unwrap_or_default();
@@ -44,7 +44,7 @@ fn main() {
         let expected_extension = if target_os == "linux" { "a" } else { "dylib" };
         if !custom_lib_path
             .extension()
-            .map_or(false, |ext| ext == expected_extension)
+            .is_some_and(|ext| ext == expected_extension)
         {
             panic!("Invalid library extension for target OS");
         }
@@ -72,7 +72,7 @@ fn main() {
         let url = base_url + filename;
 
         let out_dir = PathBuf::from(env::var("OUT_DIR").unwrap());
-        let out_path = out_dir.join(&filename);
+        let out_path = out_dir.join(filename);
 
         // Download if not already present
         if !out_path.exists() {

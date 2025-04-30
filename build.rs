@@ -3,7 +3,7 @@ use std::{env, fs, path::PathBuf};
 fn main() {
     println!("cargo::rustc-check-cfg=cfg(rtsan_enabled)");
 
-    const RTSAN_ENV_VAR: &str = "RTSAN";
+    const RTSAN_ENV_VAR: &str = "RTSAN_ENABLE";
 
     println!("cargo:rerun-if-env-changed={}", RTSAN_ENV_VAR);
 
@@ -17,12 +17,12 @@ fn main() {
         let is_supported = targets_map.contains_key(&target);
 
         if is_supported {
-            println!("cargo:warning={}", "RealtimeSanitizer enabled");
+            println!("cargo:warning=RealtimeSanitizer enabled");
             println!("cargo:rustc-cfg=rtsan_enabled");
         } else {
             println!(
-                "cargo:error={}",
-                format!("Realtime Sanitizer not supported on target: {}", target)
+                "cargo:error=Realtime Sanitizer not supported on target: {}",
+                target
             );
         }
     }
