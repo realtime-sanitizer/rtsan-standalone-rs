@@ -11,6 +11,3 @@ version.workspace = true
 
 [dependencies]
 rtsan-standalone = { workspace = true }
-
-[features]
-rtsan = ["rtsan-standalone/enable"]
