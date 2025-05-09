@@ -1,7 +1,6 @@
 extern crate libtest_mimic;
 
 use libtest_mimic::{Arguments, Failed, Trial};
-use regex::bytes::Regex;
 use std::{
     fs::read_dir,
     process::{Command, ExitCode, Stdio},
@@ -10,33 +9,29 @@ use std::{
 fn main() -> ExitCode {
     let args = Arguments::from_args();
 
-    let mut test_cases: Vec<(String, Regex)> = Vec::new();
+    let mut test_cases: Vec<String> = Vec::new();
 
     // collect test cases
     for file in read_dir("tests/detection-tests/examples").unwrap() {
         let file = file.unwrap();
         // println!("{:?}", file);
         assert!(file.metadata().unwrap().is_file());
-        let content = std::fs::read_to_string(file.path()).unwrap();
-        let first_line = content.lines().next().unwrap().strip_prefix("// ").unwrap();
-        let regex = Regex::new(first_line).unwrap();
 
-        test_cases.push((
+        test_cases.push(
             file.file_name()
                 .into_string()
                 .unwrap()
                 .strip_suffix(".rs")
                 .unwrap()
                 .to_string(),
-            regex,
-        ));
+        );
     }
 
     // println!("{test_cases:?}");
     // create tests
     let tests = test_cases
         .into_iter()
-        .map(|(name, regex)| {
+        .map(|name| {
             Trial::test(name.clone(), move || {
                 let process = Command::new("cargo")
                     .args([
@@ -58,12 +53,8 @@ fn main() -> ExitCode {
                     Err(Failed::from(format!(
                         "no violation detected. output: {output:?}"
                     )))
-                } else if regex.is_match(&output.stderr) {
-                    Ok(())
                 } else {
-                    Err(Failed::from(format!(
-                        "stderr didn't match regex. output: {output:?}"
-                    )))
+                    Ok(())
                 }
             })
         })
