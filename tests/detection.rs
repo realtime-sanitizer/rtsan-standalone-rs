@@ -36,8 +36,6 @@ fn main() -> ExitCode {
                 let process = Command::new("cargo")
                     .args([
                         "run".to_owned(),
-                        "--package".to_owned(),
-                        "detection-tests".to_owned(),
                         "--example".to_owned(),
                         name,
                         "--features".to_owned(),
@@ -45,6 +43,7 @@ fn main() -> ExitCode {
                     ])
                     .stderr(Stdio::piped())
                     .stdout(Stdio::piped())
+                    .current_dir("tests/detection/")
                     .spawn()
                     .unwrap();
                 let output = process.wait_with_output().unwrap();
