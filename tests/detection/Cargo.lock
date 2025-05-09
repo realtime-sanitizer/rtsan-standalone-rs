@@ -800,7 +800,7 @@ dependencies = [
 
 [[package]]
 name = "rtsan-standalone"
-version = "0.1.2"
+version = "0.2.0"
 dependencies = [
  "rtsan-standalone-macros",
  "rtsan-standalone-sys",
@@ -808,7 +808,7 @@ dependencies = [
 
 [[package]]
 name = "rtsan-standalone-macros"
-version = "0.1.2"
+version = "0.2.0"
 dependencies = [
  "quote",
  "syn",
@@ -816,7 +816,7 @@ dependencies = [
 
 [[package]]
 name = "rtsan-standalone-sys"
-version = "0.1.1"
+version = "0.2.0"
 dependencies = [
  "num_cpus",
  "reqwest",
