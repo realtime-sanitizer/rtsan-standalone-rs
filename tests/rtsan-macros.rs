@@ -1,9 +1,3 @@
-use std::{
-    future::Future,
-    pin,
-    task::{Context, Waker},
-};
-
 use rtsan_standalone::{
     blocking, ensure_initialized, no_sanitize_realtime, nonblocking, scoped_disabler,
 };
@@ -78,7 +72,7 @@ fn test_blocking() {
 
 #[nonblocking]
 fn early_return(r: &[f32]) -> Option<&[f32]> {
-    // let r = r;
+    let r = r;
     for r in r.iter() {
         if *r == 1.0 {
             return None;
