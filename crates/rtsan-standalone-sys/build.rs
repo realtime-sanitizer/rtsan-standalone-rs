@@ -175,7 +175,7 @@ fn main() {
 fn load_supported_targets() -> std::io::Result<std::collections::HashMap<String, String>> {
     use std::io::BufRead;
     let manifest = PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap());
-    let cfg_path = manifest.join("supported-targets.txt");
+    let cfg_path = manifest.join("../supported-targets.txt");
     let file = fs::File::open(cfg_path)?;
     let reader = std::io::BufReader::new(file);
     let mut targets_map = std::collections::HashMap::new();
