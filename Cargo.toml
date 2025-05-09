@@ -37,6 +37,7 @@ rtsan-standalone-sys = { workspace = true }
 
 [dev-dependencies]
 criterion = "0.5.1"
+libtest-mimic = "0.8.1"
 
 [features]
 default = ["prebuilt-libs"]
@@ -44,4 +45,8 @@ prebuilt-libs = ["rtsan-standalone-sys/prebuilt-libs"]
 
 [[bench]]
 name = "rtsan-bench"
+harness = false
+
+[[test]]
+name = "detection"
 harness = false
