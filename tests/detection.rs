@@ -34,13 +34,8 @@ fn main() -> ExitCode {
         .map(|name| {
             Trial::test(name.clone(), move || {
                 let process = Command::new("cargo")
-                    .args([
-                        "run".to_owned(),
-                        "--example".to_owned(),
-                        name,
-                        "--features".to_owned(),
-                        "rtsan".to_owned(),
-                    ])
+                    .args(["run".to_owned(), "--example".to_owned(), name])
+                    .env("RTSAN_ENABLE", "1")
                     .current_dir("tests/detection/")
                     .stderr(Stdio::piped())
                     .stdout(Stdio::piped())

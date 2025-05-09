@@ -7,6 +7,3 @@ edition = "2021"
 
 [dependencies]
 rtsan-standalone = { path = "../../../rtsan-standalone-rs" }
-
-[features]
-rtsan = ["rtsan-standalone/enable"]
