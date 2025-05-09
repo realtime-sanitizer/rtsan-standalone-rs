@@ -13,7 +13,7 @@ fn main() -> ExitCode {
     let mut test_cases: Vec<(String, Regex)> = Vec::new();
 
     // collect test cases
-    for file in read_dir("detection-tests/examples").unwrap() {
+    for file in read_dir("tests/detection-tests/examples").unwrap() {
         let file = file.unwrap();
         // println!("{:?}", file);
         assert!(file.metadata().unwrap().is_file());
@@ -21,7 +21,15 @@ fn main() -> ExitCode {
         let first_line = content.lines().next().unwrap().strip_prefix("// ").unwrap();
         let regex = Regex::new(first_line).unwrap();
 
-        test_cases.push((file.file_name().into_string().unwrap().strip_suffix(".rs").unwrap().to_string(), regex));
+        test_cases.push((
+            file.file_name()
+                .into_string()
+                .unwrap()
+                .strip_suffix(".rs")
+                .unwrap()
+                .to_string(),
+            regex,
+        ));
     }
 
     // println!("{test_cases:?}");
@@ -47,11 +55,15 @@ fn main() -> ExitCode {
                 let output = process.wait_with_output().unwrap();
                 // println!("{output:?}");
                 if output.status.success() {
-                    Err(Failed::from(format!("no violation detected. output: {output:?}")))
+                    Err(Failed::from(format!(
+                        "no violation detected. output: {output:?}"
+                    )))
                 } else if regex.is_match(&output.stderr) {
                     Ok(())
                 } else {
-                    Err(Failed::from(format!("stderr didn't match regex. output: {output:?}")))
+                    Err(Failed::from(format!(
+                        "stderr didn't match regex. output: {output:?}"
+                    )))
                 }
             })
         })
