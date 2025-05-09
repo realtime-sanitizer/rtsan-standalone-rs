@@ -12,7 +12,7 @@ fn main() -> ExitCode {
     let mut test_cases: Vec<String> = Vec::new();
 
     // collect test cases
-    for file in read_dir("tests/detection-tests/examples").unwrap() {
+    for file in read_dir("tests/detection/examples").unwrap() {
         let file = file.unwrap();
         // println!("{:?}", file);
         assert!(file.metadata().unwrap().is_file());

@@ -1,5 +1,5 @@
 [workspace]
-members = ["crates/rtsan-standalone-sys", "examples/integration-example", "tests/detection-tests"]
+members = ["crates/rtsan-standalone-sys", "examples/integration-example", "tests/detection"]
 resolver = "2"
 
 [workspace.package]
@@ -47,5 +47,5 @@ name = "rtsan-bench"
 harness = false
 
 [[test]]
-name = "violations"
+name = "detection"
 harness = false
