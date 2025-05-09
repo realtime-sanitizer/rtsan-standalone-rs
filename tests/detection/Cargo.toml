@@ -1,0 +1,16 @@
+[package]
+authors.workspace = true
+categories.workspace = true
+edition.workspace = true
+keywords.workspace = true
+license.workspace = true
+name = "detection-tests"
+publish = false
+repository.workspace = true
+version.workspace = true
+
+[dependencies]
+rtsan-standalone = { workspace = true }
+
+[features]
+rtsan = ["rtsan-standalone/enable"]
