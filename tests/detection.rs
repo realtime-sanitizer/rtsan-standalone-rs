@@ -27,6 +27,13 @@ fn main() -> ExitCode {
         );
     }
 
+    #[expect(unexpected_cfgs)]
+    let ignored = !cfg!(rtsan_supported);
+
+    if ignored {
+        println!("WARNING: RTSAN not supported. Skipping detection tests");
+    }
+
     // println!("{test_cases:?}");
     // create tests
     let tests = test_cases
@@ -51,6 +58,7 @@ fn main() -> ExitCode {
                     Ok(())
                 }
             })
+            .with_ignored_flag(ignored)
         })
         .collect();
 
