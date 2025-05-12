@@ -3,7 +3,7 @@ fn main() {
 
     const RTSAN_ENV_VAR: &str = "RTSAN_ENABLE";
 
-    println!("cargo:rerun-if-env-changed={}", RTSAN_ENV_VAR);
+    println!("cargo:rerun-if-env-changed={RTSAN_ENV_VAR}");
 
     // Hardcoded list of supported targets
     const SUPPORTED_TARGETS: [&str; 6] = [
@@ -25,10 +25,7 @@ fn main() {
             println!("cargo:warning=RealtimeSanitizer enabled");
             println!("cargo:rustc-cfg=rtsan_enabled");
         } else {
-            println!(
-                "cargo:error=Realtime Sanitizer not supported on target: {}",
-                target
-            );
+            println!("cargo:error=Realtime Sanitizer not supported on target: {target}");
         }
     }
 }

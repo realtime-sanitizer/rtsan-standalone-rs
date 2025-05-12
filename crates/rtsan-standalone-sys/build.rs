@@ -9,21 +9,32 @@ const RTSAN_ENV_VAR: &str = "RTSAN_ENABLE";
 
 // Hardcoded supported targets with their corresponding library filenames
 const SUPPORTED_TARGETS: [(&str, &str); 6] = [
-    ("x86_64-unknown-linux-gnu", "libclang_rt.rtsan_linux_x86_64.a"),
-    ("aarch64-unknown-linux-gnu", "libclang_rt.rtsan_linux_aarch64.a"),
+    (
+        "x86_64-unknown-linux-gnu",
+        "libclang_rt.rtsan_linux_x86_64.a",
+    ),
+    (
+        "aarch64-unknown-linux-gnu",
+        "libclang_rt.rtsan_linux_aarch64.a",
+    ),
     ("x86_64-apple-darwin", "libclang_rt.rtsan_osx_dynamic.dylib"),
-    ("aarch64-apple-darwin", "libclang_rt.rtsan_osx_dynamic.dylib"),
+    (
+        "aarch64-apple-darwin",
+        "libclang_rt.rtsan_osx_dynamic.dylib",
+    ),
     ("aarch64-apple-ios", "libclang_rt.rtsan_ios_dynamic.dylib"),
     ("x86_64-apple-ios", "libclang_rt.rtsan_iossim_dynamic.dylib"),
 ];
 
 fn main() {
     println!("cargo::rustc-check-cfg=cfg(rtsan_enabled)");
-    println!("cargo:rerun-if-env-changed={}", RTSAN_ENV_VAR);
+    println!("cargo:rerun-if-env-changed={RTSAN_ENV_VAR}");
 
     let target = std::env::var("TARGET").unwrap_or_default();
-    
-    let target_entry = SUPPORTED_TARGETS.iter().find(|&&(t, _)| t == target.as_str());
+
+    let target_entry = SUPPORTED_TARGETS
+        .iter()
+        .find(|&&(t, _)| t == target.as_str());
     let is_supported = target_entry.is_some();
     let is_enabled = std::env::var(RTSAN_ENV_VAR).is_ok();
 
@@ -42,10 +53,7 @@ fn main() {
     if let Ok(custom_lib_path) = env::var("RTSAN_LIB_PATH") {
         let custom_lib_path = PathBuf::from(custom_lib_path);
         if !custom_lib_path.exists() {
-            panic!(
-                "Provided library path does not exist: {:?}",
-                custom_lib_path
-            );
+            panic!("Provided library path does not exist: {custom_lib_path:?}",);
         }
 
         let expected_extension = if target_os == "linux" { "a" } else { "dylib" };
@@ -68,11 +76,11 @@ fn main() {
     // Check if pre-built libraries should be downloaded
     if cfg!(feature = "prebuilt-libs") {
         let base_url = format!(
-            "https://github.com/realtime-sanitizer/rtsan-libs/releases/download/{}/",
-            LLVM_VERSION
+            "https://github.com/realtime-sanitizer/rtsan-libs/releases/download/{LLVM_VERSION}/",
         );
 
-        let (_, filename) = target_entry.expect("Target should be in list if is_supported was true");
+        let (_, filename) =
+            target_entry.expect("Target should be in list if is_supported was true");
         let url = base_url + filename;
 
         let out_dir = PathBuf::from(env::var("OUT_DIR").unwrap());
@@ -80,7 +88,7 @@ fn main() {
 
         // Download if not already present
         if !out_path.exists() {
-            println!("Downloading {} to {:?}", url, out_path);
+            println!("Downloading {url} to {out_path:?}");
             let response = reqwest::blocking::get(&url)
                 .expect("Failed to download file")
                 .bytes()
@@ -155,18 +163,18 @@ fn main() {
     let num_cores = num_cpus::get();
     run_command(
         "make",
-        &[&format!("-j{}", num_cores), "rtsan"],
+        &[&format!("-j{num_cores}"), "rtsan"],
         build_dir.to_str().unwrap(),
     );
 
     let lib_path = if target_os == "linux" {
-        build_dir.join(format!("lib/linux/libclang_rt.rtsan-{}.a", target_arch))
+        build_dir.join(format!("lib/linux/libclang_rt.rtsan-{target_arch}.a"))
     } else {
         build_dir.join("lib/darwin/libclang_rt.rtsan_osx_dynamic.dylib")
     };
 
     if !lib_path.exists() {
-        panic!("Built library not found at {:?}", lib_path);
+        panic!("Built library not found at {lib_path:?}");
     }
 
     let lib_name = lib_path.file_name().unwrap();
@@ -187,7 +195,7 @@ fn setup_linking(lib_path: &Path, target_os: &str) {
             .unwrap()
             .trim_start_matches("lib")
             .trim_end_matches(".a");
-        println!("cargo:rustc-link-lib=static={}", lib_stem);
+        println!("cargo:rustc-link-lib=static={lib_stem}");
     } else {
         // Adjust install_name for macOS
         run_command(
@@ -217,10 +225,7 @@ fn setup_linking(lib_path: &Path, target_os: &str) {
 
 fn check_tool(tool: &str) {
     if Command::new(tool).arg("--version").output().is_err() {
-        println!(
-            "cargo:warning=Required tool '{}' not found in PATH. Please install it.",
-            tool
-        );
+        println!("cargo:warning=Required tool '{tool}' not found in PATH. Please install it.",);
     }
 }
 
@@ -229,8 +234,8 @@ fn run_command(cmd: &str, args: &[&str], dir: &str) {
         .args(args)
         .current_dir(dir)
         .status()
-        .unwrap_or_else(|_| panic!("Failed to run '{}'", cmd));
+        .unwrap_or_else(|_| panic!("Failed to run '{cmd}'"));
     if !status.success() {
-        panic!("Command '{}' failed with status {:?}", cmd, status);
+        panic!("Command '{cmd}' failed with status {status:?}");
     }
 }
