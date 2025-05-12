@@ -1,5 +1,3 @@
-// Intercepted call to real-time unsafe function `malloc` in real-time context!\n
-
 use rtsan_standalone::*;
 
 /// Add the [`rtsan::nonblocking`] macro to the process function.
