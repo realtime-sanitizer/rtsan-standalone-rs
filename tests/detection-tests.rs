@@ -12,18 +12,18 @@ fn main() -> ExitCode {
     let mut test_cases: Vec<String> = Vec::new();
 
     // collect test cases
-    for file in read_dir("tests/detection/examples").unwrap() {
+    for file in read_dir("tests/detection-tests/src/bin").unwrap() {
         let file = file.unwrap();
-        // println!("{:?}", file);
+
         assert!(file.metadata().unwrap().is_file());
 
         test_cases.push(
             file.file_name()
-                .into_string()
+                .to_str()
                 .unwrap()
                 .strip_suffix(".rs")
                 .unwrap()
-                .to_string(),
+                .to_owned(),
         );
     }
 
@@ -34,26 +34,22 @@ fn main() -> ExitCode {
         println!("WARNING: RTSAN not supported. Skipping detection tests");
     }
 
-    // println!("{test_cases:?}");
-    // create tests
+    // run tests
     let tests = test_cases
         .into_iter()
         .map(|name| {
             Trial::test(name.clone(), move || {
                 let process = Command::new("cargo")
-                    .args(["run".to_owned(), "--example".to_owned(), name])
+                    .args(["run", "-p", "detection-tests", "--bin", &name])
                     .env("RTSAN_ENABLE", "1")
-                    .current_dir("tests/detection/")
                     .stderr(Stdio::piped())
                     .stdout(Stdio::piped())
                     .spawn()
                     .unwrap();
                 let output = process.wait_with_output().unwrap();
-                // println!("{output:?}");
+
                 if output.status.success() {
-                    Err(Failed::from(format!(
-                        "no violation detected. output: {output:?}"
-                    )))
+                    Err(Failed::from(format!("no violation detected.")))
                 } else {
                     Ok(())
                 }
@@ -61,8 +57,6 @@ fn main() -> ExitCode {
             .with_ignored_flag(ignored)
         })
         .collect();
-
-    // println!("{tests:?}");
 
     libtest_mimic::run(&args, tests).exit_code()
 }

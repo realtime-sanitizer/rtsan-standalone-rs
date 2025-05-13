@@ -52,5 +52,5 @@ name = "detection_tests"
 harness = false
 
 [[test]]
-name = "detection"
+name = "detection-tests"
 harness = false
