@@ -1,5 +1,6 @@
 fn main() {
     println!("cargo::rustc-check-cfg=cfg(rtsan_enabled)");
+    println!("cargo::rustc-check-cfg=cfg(rtsan_supported)");
 
     const RTSAN_ENV_VAR: &str = "RTSAN_ENABLE";
 

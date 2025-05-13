@@ -44,9 +44,9 @@ default = ["prebuilt-libs"]
 prebuilt-libs = ["rtsan-standalone-sys/prebuilt-libs"]
 
 [[bench]]
-name = "rtsan-bench"
+name = "rtsan_bench"
 harness = false
 
 [[test]]
-name = "detection-tests"
+name = "detection_tests"
 harness = false

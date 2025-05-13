@@ -27,7 +27,6 @@ fn main() -> ExitCode {
         );
     }
 
-    #[expect(unexpected_cfgs)]
     let ignored = !cfg!(rtsan_supported);
 
     if ignored {
@@ -49,7 +48,7 @@ fn main() -> ExitCode {
                 let output = process.wait_with_output().unwrap();
 
                 if output.status.success() {
-                    Err(Failed::from(format!("no violation detected.")))
+                    Err(Failed::from("no violation detected."))
                 } else {
                     Ok(())
                 }
