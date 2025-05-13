@@ -1,9 +1,0 @@
-[package]
-name = "detection-tests"
-publish = false
-edition = "2021"
-
-[workspace]
-
-[dependencies]
-rtsan-standalone = { path = "../../../rtsan-standalone-rs" }
