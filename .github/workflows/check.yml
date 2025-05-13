@@ -34,6 +34,12 @@ jobs:
           components: rustfmt
       - name: cargo fmt --check
         run: cargo fmt --check
+      - name: Install taplo
+        uses: uncenter/setup-taplo@v1
+        with:
+          version: "0.9.3"
+      - name: taplo fmt --check
+        run: taplo fmt --check
   clippy:
     runs-on: ubuntu-latest
     name: ${{ matrix.toolchain }} / clippy
