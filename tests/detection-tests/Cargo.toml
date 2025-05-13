@@ -1,0 +1,7 @@
+[package]
+name = "detection-tests"
+publish = false
+edition.workspace = true
+
+[dependencies]
+rtsan-standalone = { workspace = true }

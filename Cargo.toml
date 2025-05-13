@@ -1,5 +1,5 @@
 [workspace]
-members = ["crates/rtsan-standalone-sys"]
+members = ["crates/rtsan-standalone-sys", "tests/detection-tests"]
 resolver = "2"
 
 [workspace.package]
@@ -37,11 +37,16 @@ rtsan-standalone-sys = { workspace = true }
 
 [dev-dependencies]
 criterion = "0.5.1"
+libtest-mimic = "0.8.1"
 
 [features]
 default = ["prebuilt-libs"]
 prebuilt-libs = ["rtsan-standalone-sys/prebuilt-libs"]
 
 [[bench]]
-name = "rtsan-bench"
+name = "rtsan_bench"
+harness = false
+
+[[test]]
+name = "detection_tests"
 harness = false
