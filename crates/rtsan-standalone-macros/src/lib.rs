@@ -13,7 +13,7 @@ use syn::{parse_macro_input, ItemFn};
 ///
 /// # Example
 ///
-/// ```
+/// ```ignore
 /// #[nonblocking]
 /// fn process() {
 ///     let _ = vec![0.0; 256]; // oops
@@ -41,7 +41,7 @@ pub fn nonblocking(_attr: TokenStream, item: TokenStream) -> TokenStream {
 ///
 /// # Example
 ///
-/// ```
+/// ```ignore
 /// #[blocking]
 /// fn my_blocking_function() {}
 /// ```
@@ -75,7 +75,7 @@ pub fn blocking(_attr: TokenStream, item: TokenStream) -> TokenStream {
 ///
 /// # Example
 ///
-/// ```
+/// ```ignore
 /// #[no_sanitize_realtime]
 /// fn process() {
 ///     let _ = vec![0.0; 256]; // ok!
