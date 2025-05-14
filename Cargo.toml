@@ -6,7 +6,7 @@ resolver = "2"
 authors = ["Stephan Eckes <stephan@neodsp.com>"]
 categories = ["development-tools"]
 edition = "2021"
-keywords = ["sanitizer", "real-time", "audio", "aerospace", "robotics"]
+keywords = ["aerospace", "audio", "real-time", "robotics", "sanitizer"]
 license = "Apache-2.0"
 readme = "README.md"
 repository = "https://github.com/realtime-sanitizer/rtsan-standalone-rs"
@@ -44,9 +44,9 @@ default = ["prebuilt-libs"]
 prebuilt-libs = ["rtsan-standalone-sys/prebuilt-libs"]
 
 [[bench]]
-name = "rtsan_bench"
 harness = false
+name = "rtsan_bench"
 
 [[test]]
-name = "detection_tests"
 harness = false
+name = "detection_tests"
