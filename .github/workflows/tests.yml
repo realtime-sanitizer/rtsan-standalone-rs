@@ -14,12 +14,9 @@ jobs:
     name: 🧪 Full Test Suite on ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, ubuntu-24.04-arm, macos-latest, windows-latest]
+        os: [ubuntu-latest, ubuntu-24.04-arm, macos-latest]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
       - run: RTSAN_ENABLE=1 cargo test --locked --all-features --all-targets --workspace
-        if: runner.os != 'Windows'
-      - run: cargo test --locked --all-features --all-targets --workspace
-        if: runner.os == 'Windows'

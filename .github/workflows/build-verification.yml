@@ -10,7 +10,7 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  test-from-source:
+  build-from-source:
     name: 🔨 Build From Source
     runs-on: ubuntu-latest
     steps:
@@ -18,7 +18,7 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
       - run: RTSAN_ENABLE=1 cargo build --locked --no-default-features --all-targets --workspace
 
-  test-custom-lib:
+  build-custom-lib:
     name: 🔗 User-Provided Library
     runs-on: ubuntu-latest
     steps:

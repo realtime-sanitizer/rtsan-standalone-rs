@@ -1,4 +1,4 @@
-name: 🚫 No-Std Support
+name: 🚫 Not Supported Targets
 
 on:
   push:
@@ -11,10 +11,18 @@ env:
 
 jobs:
   nostd:
-    runs-on: ubuntu-latest
     name: 🔌 ARM Cortex-M Check
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
       - run: rustup target add thumbv7m-none-eabi
       - run: cargo check --target thumbv7m-none-eabi --no-default-features
+
+  windows:
+    name: 🪟 Windows
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - run: cargo check --locked --all-features --all-targets --workspace
