@@ -1,0 +1,25 @@
+name: 🧪 Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  test:
+    name: 🧪 Full Test Suite on ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - run: RTSAN_ENABLE=1 cargo test --locked --all-features --all-targets --workspace
+        if: runner.os != 'Windows'
+      - run: cargo test --locked --all-features --all-targets --workspace
+        if: runner.os == 'Windows'

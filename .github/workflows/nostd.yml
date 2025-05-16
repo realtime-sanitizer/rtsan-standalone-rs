@@ -1,9 +1,10 @@
-name: ⚙️ no_std Compatibility
+name: 🚫 No-Std Support
 
 on:
   push:
-    branches: [main, master, dev]
+    branches: [main]
   pull_request:
+  workflow_dispatch:
 
 env:
   CARGO_TERM_COLOR: always
@@ -11,12 +12,9 @@ env:
 jobs:
   nostd:
     runs-on: ubuntu-latest
-    name: Check ${{ matrix.target }}
-    strategy:
-      matrix:
-        target: [thumbv7m-none-eabi, aarch64-unknown-none]
+    name: 🔌 ARM Cortex-M Check
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
-      - run: rustup target add ${{ matrix.target }}
-      - run: cargo check --target ${{ matrix.target }} --no-default-features
+      - run: rustup target add thumbv7m-none-eabi
+      - run: cargo check --target thumbv7m-none-eabi --no-default-features

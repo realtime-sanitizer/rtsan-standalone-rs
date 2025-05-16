@@ -1,16 +1,17 @@
-name: 🔍 Cargo Check
+name: 🛡️ Quality Checks
 
 on:
   push:
-    branches: [main, master, dev]
+    branches: [main]
   pull_request:
+  workflow_dispatch:
 
 env:
   CARGO_TERM_COLOR: always
 
 jobs:
   fmt:
-    name: Check code formatting
+    name: 📝 Code Format
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -19,8 +20,8 @@ jobs:
           components: rustfmt
       - run: cargo fmt --check
 
-  toml-fmt:
-    name: Check toml file formatting
+  taplo-fmt:
+    name: 📄 TOML Format
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -28,26 +29,25 @@ jobs:
       - run: taplo fmt --check
 
   clippy:
-    name: Check clippy
+    name: 🔍 Linting
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
         with:
-          components: cargo clippy
+          components: clippy
       - run: RUSTFLAGS="-D warnings" cargo clippy
 
   doc:
-    name: Check documentation
+    name: 📚 Documentation
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
       - run: RUSTDOCFLAGS="-D warnings" cargo doc --locked --document-private-items
 
-  # semver only works if the crate is published to crates.io
   semver:
-    name: Check semantic versioning compatibility
+    name: 🏷️ Semver Checks
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -55,7 +55,7 @@ jobs:
       - uses: obi1kenobi/cargo-semver-checks-action@v2
 
   hack:
-    name: Check feature combinations
+    name: 🧩 Feature Matrix
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -63,9 +63,8 @@ jobs:
       - uses: taiki-e/install-action@cargo-hack
       - run: cargo hack --feature-powerset check
 
-  # Check minimum supported Rust version
   msrv:
-    name: Check MSRV
+    name: 🏗️ MSRV Check
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
