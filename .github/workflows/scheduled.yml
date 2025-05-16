@@ -15,7 +15,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@nightly
-      - run: RTSAN_ENABLE=1 cargo test --locked --all-features --all-targets
+      - run: RTSAN_ENABLE=1 cargo test --locked --all-features --all-targets --workspace
 
   update:
     name: Test updated
@@ -24,4 +24,4 @@ jobs:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@beta
       - run: cargo update
-      - run: RTSAN_ENABLE=1  RUSTFLAGS="-D deprecated" cargo test --locked --all-features --all-targets
+      - run: RTSAN_ENABLE=1  RUSTFLAGS="-D deprecated" cargo test --locked --all-features --all-targets --workspace
