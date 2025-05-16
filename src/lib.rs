@@ -157,10 +157,6 @@ pub fn ensure_initialized() {
 /// Including this in the first line of a function definition is
 /// analogous to marking a function  with the [`blocking`] macro.
 ///
-/// # Panics
-///
-/// Panics if the provided string is not null-terminated.
-///
 /// # Example
 ///
 /// ```
