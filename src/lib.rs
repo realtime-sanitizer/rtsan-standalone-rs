@@ -167,7 +167,7 @@ pub fn ensure_initialized() {
 /// use rtsan_standalone::*;
 ///
 /// fn my_blocking_function() {
-///     notify_blocking_call("my_blocking_function\0");
+///     notify_blocking_call(c"my_blocking_function");
 /// }
 ///
 /// // Preferred macro usage
@@ -175,12 +175,9 @@ pub fn ensure_initialized() {
 /// fn my_blocking_function_preferred() {}
 /// ```
 #[allow(unused_variables)]
-pub fn notify_blocking_call(function_name: &'static str) {
+pub fn notify_blocking_call(function_name: &'static core::ffi::CStr) {
     #[cfg(rtsan_enabled)]
     {
-        if !function_name.ends_with('\0') {
-            panic!("`notify_blocking_call` requires a null-terminated function name (e.g., \"my_function_name\\0\").");
-        }
         unsafe {
             rtsan_standalone_sys::__rtsan_notify_blocking_call(
                 function_name.as_ptr() as *const core::ffi::c_char
