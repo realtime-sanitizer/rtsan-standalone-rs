@@ -175,9 +175,7 @@ pub fn notify_blocking_call(function_name: &'static core::ffi::CStr) {
     #[cfg(rtsan_enabled)]
     {
         unsafe {
-            rtsan_standalone_sys::__rtsan_notify_blocking_call(
-                function_name.as_ptr() as *const core::ffi::c_char
-            );
+            rtsan_standalone_sys::__rtsan_notify_blocking_call(function_name.as_ptr());
         }
     }
 }
