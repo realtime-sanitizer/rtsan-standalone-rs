@@ -127,7 +127,7 @@ fn main() {
             "https://github.com/llvm/llvm-project.git",
             llvm_project_dir.to_str().unwrap(),
         ],
-        ".",
+        Path::new("."),
     );
 
     // Perform sparse checkout
@@ -140,9 +140,9 @@ fn main() {
             "compiler-rt",
             "cmake",
         ],
-        llvm_project_dir.to_str().unwrap(),
+        &llvm_project_dir,
     );
-    run_command("git", &["checkout"], llvm_project_dir.to_str().unwrap());
+    run_command("git", &["checkout"], &llvm_project_dir);
 
     // Build the library
     let build_dir = llvm_project_dir.join("build");
@@ -159,14 +159,10 @@ fn main() {
             "-DLLVM_TARGETS_TO_BUILD=Native",
             "../compiler-rt",
         ],
-        build_dir.to_str().unwrap(),
+        &build_dir,
     );
     let num_cores = num_cpus::get();
-    run_command(
-        "make",
-        &[&format!("-j{num_cores}"), "rtsan"],
-        build_dir.to_str().unwrap(),
-    );
+    run_command("make", &[&format!("-j{num_cores}"), "rtsan"], &build_dir);
 
     let lib_path = if target_os == "linux" {
         build_dir.join(format!("lib/linux/libclang_rt.rtsan-{target_arch}.a"))
@@ -206,7 +202,7 @@ fn setup_linking(lib_path: &Path, target_os: &str) {
                 "@rpath/libclang_rt.rtsan_osx_dynamic.dylib",
                 lib_path.to_str().unwrap(),
             ],
-            ".",
+            Path::new("."),
         );
 
         // Link the dylib
@@ -230,7 +226,7 @@ fn check_tool(tool: &str) {
     }
 }
 
-fn run_command(cmd: &str, args: &[&str], dir: &str) {
+fn run_command(cmd: &str, args: &[&str], dir: &Path) {
     let status = Command::new(cmd)
         .args(args)
         .current_dir(dir)
