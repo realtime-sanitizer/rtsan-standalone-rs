@@ -5,6 +5,7 @@ use std::process::Command;
 use tempfile::tempdir;
 
 const LLVM_VERSION: &str = "v20.1.1.1";
+const LLVM_BRANCH_NAME: &str = "llvmorg-20.1.1";
 const RTSAN_ENV_VAR: &str = "RTSAN_ENABLE";
 
 // Hardcoded supported targets with their corresponding library filenames
@@ -122,7 +123,7 @@ fn main() {
             "--depth=1",
             "--filter=tree:0",
             "--branch",
-            "llvmorg-20.1.0",
+            LLVM_BRANCH_NAME,
             "https://github.com/llvm/llvm-project.git",
             llvm_project_dir.to_str().unwrap(),
         ],
