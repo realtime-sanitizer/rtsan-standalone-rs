@@ -53,6 +53,7 @@ RTSAN_ENABLE=1 cargo run
 ### Pre-built Libraries
 
 By default this crate downloads pre-built libraries from the repo [rtsan-libs](https://github.com/realtime-sanitizer/rtsan-libs).
+This requires `curl` to be installed.
 
 If you do not wish to use the pre-built libraries you can disable the default features and either let the build script build the library automatically
 or provide a custom build of rtsan.
@@ -81,6 +82,7 @@ RTSAN_LIBRARY_PATH=/path/to/libclang_rt.rtsan-x86_64.a RTSAN_ENABLE=1 cargo run
 ## Features
 
 The `prebuilt-libs` feature enables automatic downloading of libraries from [rtsan-libs](https://github.com/realtime-sanitizer/rtsan-libs) and is activated by default, eliminating the need for local compilation.
+This requires `curl` to be installed.
 
 ## Examples
 

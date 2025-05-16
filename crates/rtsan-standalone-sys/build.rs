@@ -76,6 +76,8 @@ fn main() {
 
     // Check if pre-built libraries should be downloaded
     if cfg!(feature = "prebuilt-libs") {
+        check_tool("curl");
+
         let base_url = format!(
             "https://github.com/realtime-sanitizer/rtsan-libs/releases/download/{LLVM_VERSION}/",
         );
@@ -90,11 +92,7 @@ fn main() {
         // Download if not already present
         if !out_path.exists() {
             println!("Downloading {url} to {out_path:?}");
-            let response = reqwest::blocking::get(&url)
-                .expect("Failed to download file")
-                .bytes()
-                .expect("Failed to read bytes");
-            fs::write(&out_path, &response).expect("Failed to write library file");
+            run_command("curl", &["-L", "-o", filename, &url], &out_dir);
         }
 
         setup_linking(&out_path, &target_os);
