@@ -57,6 +57,8 @@ pub fn blocking(_attr: TokenStream, item: TokenStream) -> TokenStream {
     let block = input.block; // Function body
     let mut function_name = sig.ident.to_string();
     function_name.push('\0');
+    let function_name_bytes = function_name.into_bytes();
+    let function_name = core::ffi::CStr::from_bytes_with_nul(&function_name_bytes).unwrap();
 
     // Generate the transformed function
     let output = quote! {
