@@ -21,7 +21,7 @@ rtsan-standalone-sys = { version = "0.2.0", path = "crates/rtsan-standalone-sys"
 [package]
 authors.workspace = true
 categories.workspace = true
-description = "A Rust wrapper for RTSan standalone"
+description = "Standalone RealtimeSanitizer for Rust"
 edition.workspace = true
 keywords.workspace = true
 license.workspace = true
