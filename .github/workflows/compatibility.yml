@@ -27,4 +27,4 @@ jobs:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@beta
       - run: cargo update
-      - run: RTSAN_ENABLE=1  RUSTFLAGS="-D deprecated" cargo test --locked --all-features --all-targets --workspace
+      - run: RTSAN_ENABLE=1 RUSTFLAGS="-D deprecated" cargo test --locked --all-features --all-targets --workspace

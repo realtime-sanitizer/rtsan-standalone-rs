@@ -71,4 +71,4 @@ jobs:
       - uses: dtolnay/rust-toolchain@master
         with:
           toolchain: 1.77.0
-      - run: RTSAN_ENABLE=1 cargo check --all-features
+      - run: cargo check --all-features
