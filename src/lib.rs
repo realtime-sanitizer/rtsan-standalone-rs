@@ -141,7 +141,7 @@ pub fn enable() {
 /// ```
 /// use rtsan_standalone::*;
 ///
-/// fn main() {
+/// fn my_entry_point() {
 ///     ensure_initialized();
 /// }
 /// ```
