@@ -1,0 +1,29 @@
+name: 🔨 Build Verification
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build-from-source:
+    name: 🔨 Build From Source
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - run: RTSAN_ENABLE=1 cargo build --locked --no-default-features --all-targets --workspace
+
+  build-custom-lib:
+    name: 🔗 User-Provided Library
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - run: |
+          curl -L -o rtsan.a https://github.com/realtime-sanitizer/rtsan-libs/releases/download/v20.1.1.1/libclang_rt.rtsan_linux_x86_64.a
+      - run: RTSAN_LIBRARY_PATH=${{ github.workspace }}/rtsan.a RTSAN_ENABLE=1 cargo test --locked --all-targets --workspace

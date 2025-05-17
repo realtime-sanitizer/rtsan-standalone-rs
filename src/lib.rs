@@ -1,6 +1,5 @@
 #![doc = include_str!("../README.md")]
 #![cfg_attr(not(test), no_std)]
-#![allow(clippy::needless_doctest_main)]
 
 pub use rtsan_standalone_macros::*;
 
@@ -142,7 +141,7 @@ pub fn enable() {
 /// ```
 /// use rtsan_standalone::*;
 ///
-/// fn main() {
+/// fn my_entry_point() {
 ///     ensure_initialized();
 /// }
 /// ```
@@ -219,6 +218,7 @@ macro_rules! scoped_disabler {
 ///     }
 ///     let _ = vec![0.0; 256]; // ok
 /// }
+/// ```
 pub struct ScopedSanitizeRealtime;
 
 impl Default for ScopedSanitizeRealtime {
@@ -260,6 +260,7 @@ impl Drop for ScopedSanitizeRealtime {
 ///     });
 ///     let mut data = vec![0.0; 16]; // not ok
 /// }
+/// ```
 pub struct ScopedDisabler;
 
 impl Default for ScopedDisabler {

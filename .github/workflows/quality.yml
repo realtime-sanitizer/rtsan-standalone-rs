@@ -1,0 +1,74 @@
+name: 🛡️ Quality Checks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  cargo-fmt:
+    name: 📝 Code Format
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt
+      - run: cargo fmt --check
+
+  taplo-fmt:
+    name: 📄 TOML Format
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: uncenter/setup-taplo@v1
+      - run: taplo fmt --check
+
+  clippy:
+    name: 📎 Clippy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy
+      - run: RUSTFLAGS="-D warnings" cargo clippy
+
+  doc:
+    name: 📚 Documentation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - run: RUSTDOCFLAGS="-D warnings" cargo doc --locked --document-private-items
+
+  semver:
+    name: 🏷️ Semver Checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: obi1kenobi/cargo-semver-checks-action@v2
+
+  hack:
+    name: 🧩 Feature Matrix
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: taiki-e/install-action@cargo-hack
+      - run: cargo hack --feature-powerset check
+
+  msrv:
+    name: 🏗️ MSRV Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: 1.77.0
+      - run: cargo check --all-features

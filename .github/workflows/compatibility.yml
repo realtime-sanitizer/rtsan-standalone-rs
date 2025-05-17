@@ -1,0 +1,30 @@
+name: 🧰 Compatibility
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+  schedule:
+    - cron: "7 7 * * *"
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  nightly:
+    name: 🌙 Nightly Rust
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@nightly
+      - run: RTSAN_ENABLE=1 cargo test --locked --all-features --all-targets --workspace
+
+  update:
+    name: 🔄 Latest Dependencies
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@beta
+      - run: cargo update
+      - run: RTSAN_ENABLE=1 RUSTFLAGS="-D deprecated" cargo test --locked --all-features --all-targets --workspace

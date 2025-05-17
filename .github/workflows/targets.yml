@@ -1,0 +1,28 @@
+name: 🚫 Not Supported Targets
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  nostd:
+    name: 🔌 ARM Cortex-M
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - run: rustup target add thumbv7m-none-eabi
+      - run: cargo check --target thumbv7m-none-eabi --no-default-features
+
+  windows:
+    name: 🪟 Windows
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - run: cargo check --locked --all-features --all-targets --workspace
