@@ -4,7 +4,7 @@ use std::path::{Path, PathBuf};
 use std::process::Command;
 use tempfile::tempdir;
 
-const LLVM_VERSION: &str = "v20.1.1.1";
+const RTSAN_LIBS_TAG: &str = "v20.1.1.1";
 const LLVM_BRANCH_NAME: &str = "llvmorg-20.1.1";
 const RTSAN_ENV_VAR: &str = "RTSAN_ENABLE";
 
@@ -79,7 +79,7 @@ fn main() {
         check_tool("curl");
 
         let base_url = format!(
-            "https://github.com/realtime-sanitizer/rtsan-libs/releases/download/{LLVM_VERSION}/",
+            "https://github.com/realtime-sanitizer/rtsan-libs/releases/download/{RTSAN_LIBS_TAG}/",
         );
 
         let (_, filename) =
