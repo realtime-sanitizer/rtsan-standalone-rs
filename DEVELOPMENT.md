@@ -4,6 +4,16 @@
 
 Please always check that the functions get completely removed when the feature enable is not set, by running the benchmark without the feature and checking that every function call results in 0 ps execution time.
 
+## Testing
+
+When the detection tests fail or you want to add a new one, run `RTSAN_ENABLE=1 cargo run -p detection-tests --bin YOUR_TEST_NAME`
+to get the failure output of the test. Then pick one or more deterministic, but for this test characteristic phrases (for example including
+function names used in the test). Add those to the very top of the test file, without any other lines in between them:
+```
+// check: PHRASE_1
+// check: PHRASE_2
+```
+
 # Release
 
 Before creating a release, check that everything can be published to crates.io.

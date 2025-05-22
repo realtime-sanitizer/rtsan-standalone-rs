@@ -1,3 +1,5 @@
+// check: RealtimeSanitizer: unsafe-library-call
+// check: Intercepted call to real-time unsafe function `malloc` in real-time context!
 use rtsan_standalone::*;
 
 #[nonblocking]
