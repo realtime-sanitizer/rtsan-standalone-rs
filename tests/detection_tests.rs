@@ -65,10 +65,12 @@ fn main() -> ExitCode {
                     .unwrap();
                 let output = process.wait_with_output().unwrap();
 
+                let stderr = String::from_utf8_lossy(&output.stderr);
                 if output.status.success() {
-                    Err(Failed::from("no violation detected."))
+                    Err(Failed::from(
+                        String::from("no violation detected. output:\n") + &stderr,
+                    ))
                 } else {
-                    let stderr = String::from_utf8_lossy(&output.stderr);
                     for check in &test.checks {
                         if !stderr.contains(check) {
                             return Err(Failed::from(
