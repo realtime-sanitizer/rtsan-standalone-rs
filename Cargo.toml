@@ -11,12 +11,12 @@ license = "Apache-2.0"
 readme = "README.md"
 repository = "https://github.com/realtime-sanitizer/rtsan-standalone-rs"
 rust-version = "1.77.0"
-version = "0.2.0"
+version = "0.3.0"
 
 [workspace.dependencies]
 rtsan-standalone = { path = "." }
-rtsan-standalone-macros = { version = "0.2.0", path = "crates/rtsan-standalone-macros" }
-rtsan-standalone-sys = { version = "0.2.0", path = "crates/rtsan-standalone-sys" }
+rtsan-standalone-macros = { version = "0.3.0", path = "crates/rtsan-standalone-macros" }
+rtsan-standalone-sys = { version = "0.3.0", path = "crates/rtsan-standalone-sys" }
 
 [package]
 authors.workspace = true
