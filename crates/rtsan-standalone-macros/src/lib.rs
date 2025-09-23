@@ -30,7 +30,7 @@ pub fn nonblocking(_attr: TokenStream, item: TokenStream) -> TokenStream {
     let output = quote! {
         #(#attrs)*
         #vis #sig {
-            let __guard = rtsan_standalone::ScopedSanitizeRealtime::default();
+            let __guard = ::rtsan_standalone::ScopedSanitizeRealtime::default();
             #block
         }
     };
@@ -64,7 +64,7 @@ pub fn blocking(_attr: TokenStream, item: TokenStream) -> TokenStream {
     let output = quote! {
         #(#attrs)*
         #vis #sig {
-            rtsan_standalone::notify_blocking_call(#function_name);
+            ::rtsan_standalone::notify_blocking_call(#function_name);
             // Directly execute and return the block
             #block
         }
@@ -98,7 +98,7 @@ pub fn no_sanitize_realtime(_attr: TokenStream, item: TokenStream) -> TokenStrea
     let output = quote! {
         #(#attrs)*
         #vis #sig {
-            let __guard = rtsan_standalone::ScopedDisabler::default();
+            let __guard = ::rtsan_standalone::ScopedDisabler::default();
             #block
         }
     };
