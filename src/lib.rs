@@ -1,6 +1,8 @@
 #![doc = include_str!("../README.md")]
 #![cfg_attr(not(test), no_std)]
 
+use core::marker::PhantomData;
+
 pub use rtsan_standalone_macros::*;
 
 /// Enter real-time context.
@@ -219,12 +221,16 @@ macro_rules! scoped_disabler {
 ///     let _ = vec![0.0; 256]; // ok
 /// }
 /// ```
-pub struct ScopedSanitizeRealtime;
+pub struct ScopedSanitizeRealtime(
+    // should not be Send
+    // This also disables Sync, but that doesn't matter
+    PhantomData<*mut ()>,
+);
 
 impl Default for ScopedSanitizeRealtime {
     fn default() -> Self {
         realtime_enter();
-        Self
+        Self(PhantomData)
     }
 }
 
@@ -261,12 +267,16 @@ impl Drop for ScopedSanitizeRealtime {
 ///     let mut data = vec![0.0; 16]; // not ok
 /// }
 /// ```
-pub struct ScopedDisabler;
+pub struct ScopedDisabler(
+    // should not be Send
+    // This also disables Sync, but that doesn't matter
+    PhantomData<*mut ()>,
+);
 
 impl Default for ScopedDisabler {
     fn default() -> Self {
         disable();
-        Self
+        Self(PhantomData)
     }
 }
 

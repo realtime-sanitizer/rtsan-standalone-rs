@@ -524,7 +524,7 @@ checksum = "2b15c43186be67a4fd63bee50d0303afffcef381492ebe2c5d87f324e1b8815c"
 
 [[package]]
 name = "rtsan-standalone"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "criterion",
  "libtest-mimic",
@@ -534,7 +534,7 @@ dependencies = [
 
 [[package]]
 name = "rtsan-standalone-macros"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "quote",
  "syn",
@@ -542,7 +542,7 @@ dependencies = [
 
 [[package]]
 name = "rtsan-standalone-sys"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "num_cpus",
  "tempfile",
