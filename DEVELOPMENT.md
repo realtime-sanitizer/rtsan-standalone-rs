@@ -18,15 +18,12 @@ function names used in the test). Add those to the very top of the test file, wi
 
 Before creating a release, check that everything can be published to crates.io.
 
-1. If there were changes in `rtsan-standalone` or `rtsan-standalone-macros`:
-  - Increase workspace version number
-  - Test if `rtsan-standalone-sys` can be published `cargo publish -p rtsan-standalone-sys --dry-run`
-  - Check if `rtsan-standalone-macros` can be pubslished with `cargo publish -p rtsan-standalone-macros --dry-run`
+1. Increase workspace version number and do not forget to:
   - Set `rtsan-stanalone-macros` dependency version number in top-level `Cargo.toml` to the newest version
   - Set `rtsan-stanalone-sys` dependency version number in top-level `Cargo.toml` to the newest version
 2. Check that the right version numbers are reflected in `README.md`.
+3. Test if release works with a dry run
+  - `cargo publish --workspace --dry-run` (cargo version > 1.90.0)
 3. Create a new release on the GitHub main branch with a tag that has the same version number as the workspace
 4. Set local repository to the release tag and publish to crates.io
-  - `cargo publish -p rtsan-standalone-sys` (if changed)
-  - `cargo publish -p rtsan-standalone-macros`
-  - `cargo publish -p rtsan-standalone`
+  - `cargo publish --workspace` (cargo version > 1.90.0)
