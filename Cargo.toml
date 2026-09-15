@@ -36,16 +36,12 @@ rtsan-standalone-macros = { workspace = true }
 rtsan-standalone-sys = { workspace = true }
 
 [dev-dependencies]
-criterion = "0.8.2"
 libtest-mimic = "0.8.1"
 
 [features]
 default = ["prebuilt-libs"]
 prebuilt-libs = ["rtsan-standalone-sys/prebuilt-libs"]
 
-[[bench]]
-harness = false
-name = "rtsan_bench"
 
 [[test]]
 harness = false

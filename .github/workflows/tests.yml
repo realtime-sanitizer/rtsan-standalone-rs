@@ -20,3 +20,15 @@ jobs:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
       - run: RTSAN_ENABLE=1 cargo test --locked --all-features --all-targets --workspace
+
+  assembly:
+    name: Disabled RTSan assembly on ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, ubuntu-24.04-arm]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - run: python3 -m unittest discover -s tests/assembly -p 'test_*.py'
+      - run: python3 tests/assembly/check.py
