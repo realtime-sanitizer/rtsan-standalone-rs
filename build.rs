@@ -24,7 +24,7 @@ fn main() {
         println!("cargo:rustc-cfg=rtsan_supported");
     }
 
-    if std::env::var(RTSAN_ENV_VAR).is_ok() {
+    if std::env::var(RTSAN_ENV_VAR).as_deref() == Ok("1") {
         if is_supported {
             println!("cargo:warning=RealtimeSanitizer enabled");
             println!("cargo:rustc-cfg=rtsan_enabled");

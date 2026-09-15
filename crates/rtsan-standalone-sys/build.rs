@@ -37,7 +37,7 @@ fn main() {
         .iter()
         .find(|&&(t, _)| t == target.as_str());
     let is_supported = target_entry.is_some();
-    let is_enabled = std::env::var(RTSAN_ENV_VAR).is_ok();
+    let is_enabled = std::env::var(RTSAN_ENV_VAR).as_deref() == Ok("1");
 
     if !is_supported || !is_enabled {
         return;

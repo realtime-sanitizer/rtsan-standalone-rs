@@ -41,7 +41,7 @@ To use RTSan, add it as a dependency in your `Cargo.toml` file:
 
 ```toml
 [dependencies]
-rtsan-standalone = "0.3.0"
+rtsan-standalone = "0.4.0"
 ```
 
 To run your project with sanitizing enabled, execute:
@@ -49,6 +49,9 @@ To run your project with sanitizing enabled, execute:
 ```sh
 RTSAN_ENABLE=1 cargo run
 ```
+
+RTSan is enabled only when `RTSAN_ENABLE` is exactly `1`. Set `RTSAN_ENABLE=0`
+or leave the variable unset to disable sanitizing; all other values also disable it.
 
 ### Pre-built Libraries
 
