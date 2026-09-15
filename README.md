@@ -44,14 +44,16 @@ To use RTSan, add it as a dependency in your `Cargo.toml` file:
 rtsan-standalone = "0.4.0"
 ```
 
-To run your project with sanitizing enabled, execute:
+Set `RTSAN_ENABLE=1` to enable the sanitizer at build time. Set `RTSAN_ENABLE=0`
+or leave the variable unset to disable it. Any other value causes a build error.
+
+A common pattern is to run your tests with RTSan enabled:
 
 ```sh
-RTSAN_ENABLE=1 cargo run
+RTSAN_ENABLE=1 cargo test
 ```
 
-RTSan is enabled only when `RTSAN_ENABLE` is exactly `1`. Set `RTSAN_ENABLE=0`
-or leave the variable unset to disable sanitizing; all other values also disable it.
+You can leave RTSan attributes, macros, and function calls in your code, including in production. When RTSan is disabled, they compile away in optimized builds and add no runtime overhead.
 
 ### Pre-built Libraries
 
